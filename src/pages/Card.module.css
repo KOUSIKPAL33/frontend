@@ -1,0 +1,22 @@
+
+.blinking{
+    font-size: 1.1rem;
+    font-weight: 400;
+    font-family: 'Orator Std';
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    animation: blink 1s infinite;
+}
+@keyframes blink{
+    50%{
+        opacity: 0;
+    }
+}
+.myzoom {
+
+    transition: transform .3s; /* Animation */
+}
+.myzoom:hover {
+    transform: scale(1.14); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+

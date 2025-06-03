@@ -1,0 +1,135 @@
+
+.faster {
+    position: relative;
+    width: 22rem;
+    background-color: #fdd1d1;
+    color:#f94a3d;
+    font-size: 1.8rem;
+    padding: 0.8rem 1rem;
+    border-radius: 5rem;
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+.image {
+    position: absolute;
+    top: 50%;
+    right: -0.1rem;
+    transform: translateY(-50%);
+    background-color: rgb(255, 255, 255);
+    border-radius: 50%;
+    width: 4.5rem;
+    height: 4.5rem;
+    justify-content: center;
+}
+.faster_img{
+    max-width: 100%;
+    height: 3rem;
+    position: absolute;
+    top: 17%;
+    left: 17%;
+}
+
+.home_h1 {
+    font-size: 4rem;
+    margin-bottom: 3rem;
+}
+.home_img{
+    max-width: 100%;
+    height: auto;
+}
+.home_p{
+    margin-bottom: 3rem;
+    width: 80%;
+    font-size: 1.2rem;
+    color: rgb(71, 75, 71);
+}
+/* ====================================================== */
+
+.service{
+    padding: 10rem 0 10rem;
+}
+.service_p{
+    font-size: 1.3rem;
+    color: #7f7979;
+}
+.service_h2{
+    font-size: 3.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+.service_h3 {
+    font-size: 1.5rem;
+    margin-top: 1.5rem;
+    text-align: left;
+}
+.service_img {
+    height: 10rem;
+}
+
+.service_card {
+    padding: 3rem;
+    padding-top: 0;
+    border-radius: 0 0 1rem 1rem;
+    background-color: white;
+    position: relative;
+    text-align: center;
+}
+.service_card::before {
+    content: "";
+    position: absolute;
+    top: -1.5%;
+    left: -1.5%;
+    width: calc(100% + 1rem);
+    height: calc(100% + 1rem);
+    border-radius: 1rem;
+    background: linear-gradient(to bottom, transparent 50%, #f3f3f3);
+    z-index: -1;
+  }
+  .service_card:hover::before {
+    background: linear-gradient(to bottom, transparent 50%, #ffcf03);
+  }
+  /* ========================================== */
+
+.about {
+    background-color: #f8f8f8;
+    padding: 5rem 0 5rem;
+  }
+
+  .about_img {
+    height: 30rem;
+  }
+  .about_h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  .about_p {
+    margin-bottom: 2rem;
+    width: 80%;
+    font-size: 1.3rem;
+    color: #7f7979;
+  }
+  .about_d_grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+  .about_card {
+    padding: 2rem;
+    border-radius: 1rem;
+    transition: all 300ms ease-in-out;
+  }
+  .about_h4 {
+    font-size: 1.5rem;
+    margin: 0.5rem 0 0.5rem;
+  }
+  .about_span {
+    font-size: 1.2rem;
+  }
+  .about_card:hover {
+    background-color:rgb(244, 242, 242);
+    box-shadow:  0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  /* ================================================== */
+
+  

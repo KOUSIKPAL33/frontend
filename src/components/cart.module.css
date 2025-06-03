@@ -1,0 +1,70 @@
+.heading {
+  text-align: center;
+  font-size: 3rem;
+  text-transform: uppercase;
+  padding: 1.5rem 0 2rem;
+  color: #072227;
+}
+
+tr {
+  border: 1px solid black;
+}
+
+.my_table {
+  text-align: center;
+  width: 100%;
+}
+
+table thead th {
+  padding: 17px 10px;
+  font-size: 1.5rem;
+  color: #fff;
+  background-color: #35858b;
+  border: 1px solid white;
+}
+
+td {
+  height: 150px;
+  width: 150px;
+  font-size: 1.3rem;
+  border: 1px solid black;
+}
+
+
+.table_bottom {
+  background-color: #072227;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  margin: 1rem 0 3rem 0;
+}
+
+.bottom_btn {
+  text-decoration: none;
+  color: black;
+  font-size: 1.3rem;
+  background-color: #aefeff;
+  padding: 1rem;
+}
+
+.bottom_btn span {
+  color: green;
+}
+
+
+.quantity_box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.id_button{
+  border: none;
+  font-size: 1.5rem;
+  padding:5px 15px;
+  background-color: white;
+  border-radius: 5px;
+}
+.id_button:hover{
+  background-color: #aefeff;
+}
