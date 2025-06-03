@@ -1,2 +1,2 @@
-const baseurl = "http://localhost:5000/api";
+const baseurl = "backend-one-liard-77.vercel.app/api";
 export default baseurl;
