@@ -5,6 +5,7 @@ const UserReducer = (state, action) => {
           ...state,
           name: action.payload.name,
           mobile: action.payload.mobile,
+          email:action.payload.email,
           addresses: action.payload.addresses,
         };
       case "CLEAR_USER":

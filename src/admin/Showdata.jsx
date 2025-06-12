@@ -18,7 +18,7 @@ function Showdata({ shop }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(name, price)
+        
     };
 
     const [selectedFilters, setSelectedFilters] = useState({ Category: [], Name: [], });
@@ -167,6 +167,7 @@ function Showdata({ shop }) {
                                                                 imgSrc={item.Image}
                                                                 quantity={1}
                                                                 shopname={shop}
+                                                                available={item.Available}
                                                             />
                                                         )}
                                                     </div>

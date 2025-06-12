@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowAltCircleLeft } from "@fortawesome/free-solid-svg-icons";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Showaddress from './Showaddress';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -17,15 +17,16 @@ function Checkout() {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [addresses, setAddresses] = useState(user.addresses);
     const [address, setAddress] = useState({ name: "", mobileno: "", location: "" });
+    const navigate = useNavigate();
 
     const itemTotal = totalPrice(cart);
     const gst = Math.floor(itemTotal * .05);
     const deliveryfee = ((itemTotal >= 300) ? 0 : 30);
     const grandTotal = (itemTotal) + gst + deliveryfee;
-
+    const token = localStorage.getItem('authToken');
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('authToken');
+
         try {
             const addressDetails = {
                 addressDetails: {
@@ -75,7 +76,41 @@ function Checkout() {
 
     const selectedAddress = addresses.find(addr => addr._id === selectedAddressId);
 
-    console.log("Selected Address:", selectedAddress);
+
+    const handleMakeOrder = async () => {
+        try {
+            if (!selectedAddress) {
+                toast.error("No delivery address selected or available.",{
+                    autoClose:1500,
+                });
+                return;
+            }
+            const response = await axios.post(`${baseurl}/order/create`, {
+                userId: user._id,
+                items: cart,
+                deliveryLocation: selectedAddress.location,
+                totalAmount: grandTotal
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+
+            if (response.status === 200) {
+                toast.success("Order placed successfully!",{
+                    autoClose:1400,
+                }
+                );
+                setTimeout(() => {
+                    navigate("/Myorders");
+                }, 1500);
+            }
+
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to place order");
+        }
+    };
 
 
     return (
@@ -162,7 +197,7 @@ function Checkout() {
                     </div>
                 </div>
                 <div className={`${styles.bg_color_radius}`}>
-                    <div className='btn btn-primary fs-5'>Make Payment</div>
+                    <div className='btn btn-primary fs-5' onClick={handleMakeOrder}>Make Order</div>
                 </div>
             </div>
         </div>

@@ -2,11 +2,13 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Login from "../screens/Login";
 import Signup from "../screens/Signup";
+import Forgotpassword from "../screens/Forgotpassword";
 import styles from "./Navbar.module.css";
 import baseurl from "../Url";
 import { cartcontext } from "../contexts/Contextprovider";
 import { userContext } from "../contexts/userContext";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser,faSignOut, faReceipt } from "@fortawesome/free-solid-svg-icons";
 import AdminLogin from "../admin/AdminLogin";
 
 
@@ -14,6 +16,8 @@ const Navbar = () => {
   const token = localStorage.getItem("authToken");
   const { cart, dispatch } = useContext(cartcontext)
   const { user, dispatchUser } = useContext(userContext)
+  const [showProfile, setShowProfile] = useState(false);
+
   const navigate = useNavigate();
 
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -39,11 +43,11 @@ const Navbar = () => {
     setShowModal(false);
     navigate("/");
   };
-  
+
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      if (isLoggedIn) {
+      if (isLoggedIn && token) {
         try {
           const response = await fetch(`${baseurl}/user`, {
             method: "GET",
@@ -61,10 +65,12 @@ const Navbar = () => {
               payload: {
                 name: data.name,
                 mobile: data.mobileno,
+                email:data.email,
                 addresses: data.addresses,
               },
             });
           } else {
+            setIsLoggedIn(false);
             console.error("Failed to fetch user data");
           }
         } catch (error) {
@@ -74,6 +80,22 @@ const Navbar = () => {
     };
     fetchUserDetails();
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      // Check if click was outside the profile dropdown or button
+      if (!e.target.closest(".profile-toggle")) {
+        setShowProfile(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
 
   return (
     <>
@@ -100,25 +122,42 @@ const Navbar = () => {
               <li className="nav-item"><Link className="nav-link fs-5" to="/kathijunction">Kathijunction</Link> </li>
             </ul>
 
-            {!token ? (
+            {!isLoggedIn ? (
               <div className="d-flex gap-1">
-              <button className="btn btn-secondary" onClick={() => toggleModal("signup")}>Sign Up</button>
-              <button className="btn btn-primary" onClick={() => toggleModal("login")}>Login</button>
-              <button className="btn btn-danger" onClick={() => toggleModal("adminLogin")}>Admin</button>
+                <button className="btn btn-secondary" onClick={() => toggleModal("signup")}>Sign Up</button>
+                <button className="btn btn-primary" onClick={() => toggleModal("login")}>Login</button>
+                <button className="btn btn-danger" onClick={() => toggleModal("adminLogin")}>Admin</button>
               </div>
             ) : (
               <div>
                 <ul className="mt-2 d-flex gap-2">
-                  <li className="btn btn-outline-light me-2 position-relative">
-                    {user.name.split(" ")[0].trim()}
-                  </li>
                   <li className="position-relative">
-                    <Link className="btn btn-outline-light me-2" to="/Mycart">Cart</Link>
+                    <Link className="btn btn-outline-light me-2" to="/Mycart">🛒Cart</Link>
                     <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                       {cart.length}
                     </span>
                   </li>
-                  <li className="btn btn-danger" onClick={handleLogout}>Logout</li>
+                  <li className="position-relative profile-toggle">
+                    <button
+                      className="btn btn-outline-light me-2"
+                      onClick={() => setShowProfile(!showProfile)}
+                    >
+                      {user.name.split(" ")[0].trim()}
+                    </button>
+
+                    {showProfile && (
+                      <div
+                        className="position-absolute top-100 end-0 bg-white border rounded shadow-sm text-dark mt-3"
+                        style={{ minWidth: "180px", zIndex: 10 }}
+                      >
+                        <Link className="btn btn-light w-100" to="  "><FontAwesomeIcon icon={faUser} className="me-2" /> My Profile</Link>
+                        <Link className="btn btn-light w-100" to="/Myorders"><FontAwesomeIcon icon={faReceipt} className="me-2" /> My Orders</Link>
+                        <Link className="btn btn-light w-100" onClick={handleLogout}><FontAwesomeIcon icon={faSignOut} className="me-2" /> Logout</Link>
+                      </div>
+                    )}
+                  </li>
+
+
                 </ul>
               </div>
             )}
@@ -135,11 +174,17 @@ const Navbar = () => {
                   onLoginSuccess={handleLoginSuccess}
                   switchToSignup={() => setActiveForm("signup")}
                   switchToadminlogin={() => setActiveForm("adminlogin")}
+                  switchToForgotpassord={() => setActiveForm("forgotpassword")}
                 />
               ) : activeForm === "signup" ? (
                 <Signup
                   switchToLogin={() => setActiveForm("login")}
                   onSignupSuccess={() => setShowModal(false)}
+                />
+              ): activeForm === "forgotpassword" ? (
+                <Forgotpassword
+                  switchToLogin={() => setActiveForm("login")}
+                  onForgotpasswordSuccess={() => setShowModal(false)}
                 />
               ) : (
                 <AdminLogin

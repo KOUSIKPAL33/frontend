@@ -8,6 +8,7 @@ import Mycart from './components/Mycart'
 import { ToastContainer } from 'react-toastify'
 import Checkout from './components/Checkout'
 import AdminHome from './admin/AdminHome'
+import Myorders from './components/Myorders'
 
 function App() {
   const token = localStorage.getItem("authToken");
@@ -22,9 +23,9 @@ function App() {
             <Route exact path='/dominos' element={<Dominos />} />
             <Route exact path='/kathijunction' element={<Kathijunction />} />
             <Route exact path='/Mycart' element={ token? <Mycart />:<Home/>} />
+            <Route exact path='/Myorders' element={ token? <Myorders />:<Home/>} />
             <Route exact path='/Checkout' element={token?<Checkout />:<Home/>} />
             <Route exact path='/admin' element={<AdminHome />} />
-
           </Routes>
         </div>
       </Router>

@@ -12,7 +12,7 @@ function Card(props) {
     const [showModal, setShowModal] = useState(false);
     const [updatedName, setUpdatedName] = useState(props.name);
     const [updatedPrice, setUpdatedPrice] = useState(props.price);
-    const [isAvailable, setIsAvailable] = useState(true);
+    const [isAvailable, setIsAvailable] = useState(props.available);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -67,7 +67,8 @@ function Card(props) {
                     <img src={'./' + props.imgSrc} className="card-img-top" style={{ height: '12rem' }} alt={props.name} />
                     <div className="card-body">
                         <h5 className="card-title text-wrap">{props.name}</h5>
-                        <p className="card-text">Some Description </p>
+                        <p className="card-text m-0">Some Description </p>
+                        <p className="card-text"><strong>Availble : </strong>{props.available?("Yes"):("No")}</p>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <div className="btn btn-secondary text-center">₹ {props.price}/-</div>
                             <button

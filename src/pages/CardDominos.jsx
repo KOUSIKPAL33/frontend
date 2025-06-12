@@ -39,6 +39,7 @@ function CardDominos(props) {
       const productDetails = {
         productId: props.pid,
         productDetails: {
+          shopname:props.shopname,
           name: props.name,
           imgSrc: props.imgSrc,
           option: choiceoptions,

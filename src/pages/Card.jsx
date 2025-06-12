@@ -7,19 +7,26 @@ import baseurl from "../Url";
 
 function Card(props) {
     const { dispatch } = useContext(cartcontext)
+    const renderStars = (rating) => {
+        const fullStar = "★"; // U+2605
+        const emptyStar = "☆"; // U+2606
+        return fullStar.repeat(rating) + emptyStar.repeat(5 - rating);
+    };
+
     async function handleCart() {
         try {
             const token = localStorage.getItem('authToken');
             if (!token) {
                 toast.error('Please! log in to add items to the cart.', {
                     position: "top-center",
-                    autoClose:1500,
+                    autoClose: 1500,
                 });
                 return;
             }
             const productDetails = {
                 productId: props.pid,
                 productDetails: {
+                    shopname: props.shopname,
                     name: props.name,
                     imgSrc: props.imgSrc,
                     price: props.price,
@@ -36,7 +43,7 @@ function Card(props) {
             );
             if (response.data.success) {
                 dispatch({ type: "Add", product: props });
-                toast.success("Item added to cart!",{ autoClose: 1500,position:"bottom-right" });
+                toast.success("Item added to cart!", { autoClose: 1500, position: "bottom-right" });
             }
         } catch (error) {
             if (error.response && error.response.status === 400 && error.response.data.message === "Item already in cart") {
@@ -54,14 +61,13 @@ function Card(props) {
                 <img src={'./' + props.imgSrc} className="card-img-top" style={{ height: '12rem' }} alt={props.name} />
                 <div className="card-body">
                     <h5 className="card-title text-wrap">{props.name}</h5>
-                    <p className="card-text">Some Description </p>
+                    <p className="card-text">Rating: {renderStars(4)} (4/5)</p>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div className="btn btn-secondary text-center">Price: {props.price}/-</div>
-                        <button
-                            className={'btn btn-primary '}
-                            onClick={handleCart}
-                        >Add to Cart
-                        </button>
+                        {props.available ? 
+                        (<button className={'btn btn-primary'} onClick={handleCart} style={{cursor:"default"}}>Add to Cart </button>)
+                        :(<button type="button" class="btn btn-primary " style={{cursor:"not-allowed"}}>Not Available</button>)}
+                        
 
                     </div>
                 </div>

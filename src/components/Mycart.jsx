@@ -13,9 +13,19 @@ function Mycart() {
     <>
       <Navbar />
       <div className="container" style={{ marginTop: '7rem' }}>
-        <h2 className={styles.heading}>My Cart</h2>
+        <h1
+          className="text-center fw-bold fs-1 text-primary"
+          style={{
+            textShadow: "1px 1px 3px rgba(0,0,0,0.2)",
+            letterSpacing: "1px",
+            marginBottom: "30px",
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+          }}
+        >
+          🛒 My Cart
+        </h1>
         {cart.length === 0 ? (
-          <p className={styles.empty}>Your Cart is empty.</p>
+          <p className="fs-2 text-center">Your Cart is empty.</p>
         ) : (
           <div>
             <table className={styles.my_table}>
@@ -24,6 +34,7 @@ function Mycart() {
                   <th>Sl.No</th>
                   <th>Name</th>
                   <th>Image</th>
+                  <th>Shop Name</th>
                   <th>Options</th>
                   <th>Price</th>
                   <th>Quantity</th>

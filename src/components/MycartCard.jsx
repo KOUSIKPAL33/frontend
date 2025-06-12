@@ -8,10 +8,29 @@ import baseurl from '../Url';
 function MycartCard({ product, slno }) {
 
   const { cart, dispatch } = useContext(cartcontext)
+
+  const updateQuantity = async (productId, action) => {
+    try {
+      await axios.put(
+        `${baseurl}/cart/updatequantity`,
+        { productId, action },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`
+          }
+        }
+      );
+    } catch (err) {
+      console.error("Failed to update cart quantity", err);
+    }
+  };
+
   const Increase = (id) => {
     const index = cart.findIndex(p => p.productId === id);
     if (index !== -1 && cart[index].quantity < 10) {
       dispatch({ type: "Increase", id });
+      updateQuantity(id, "increase");
+      
     }
   };
 
@@ -20,6 +39,7 @@ function MycartCard({ product, slno }) {
 
     if (index !== -1 && cart[index].quantity > 1) {
       dispatch({ type: "Decrease", id });
+      updateQuantity(id, "decrease");
     }
   };
 
@@ -44,9 +64,9 @@ function MycartCard({ product, slno }) {
 
       if (response.data.success) {
         dispatch({ type: "Remove", id: product.productId });
-        toast.success('Item deleted Successfully',{
-          position:'bottom-right',
-          autoClose:1500
+        toast.success('Item deleted Successfully', {
+          position: 'bottom-right',
+          autoClose: 1500
         })
       } else {
         console.log("Failed to delete item:", response.data.message);
@@ -67,6 +87,7 @@ function MycartCard({ product, slno }) {
           style={{ width: '180px', height: '140px', padding: '5px' }}
         />
       </td>
+      <td>{product.shopname}</td>
       <td>{product.option}</td>
       <td>Rs. {product.price}/-</td>
       <td>

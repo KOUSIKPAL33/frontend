@@ -6,6 +6,7 @@ export const userContext = createContext();
 const initialState = {
   name: "",
   mobile: "",
+  email:"",
   addresses:[],
 };
 

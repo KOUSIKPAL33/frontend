@@ -9,8 +9,10 @@ import { faFacebook, faTwitter, faLinkedin, faGoogle } from "@fortawesome/free-b
 
 function AdminLogin({ onAdminLoginSuccess }) {
   const [credentials, setCredentials] = useState({ email: "", password: "", shop: "" });
+  const [loading,setLoading]=useState(false);
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
 
     if (!credentials.shop || credentials.shop === "default") {
@@ -19,6 +21,7 @@ function AdminLogin({ onAdminLoginSuccess }) {
         position: "top-center",
         autoClose: 1500,
       });
+      setLoading(false);
       return;
     }
 
@@ -44,6 +47,7 @@ function AdminLogin({ onAdminLoginSuccess }) {
           theme: "colored",
           autoClose: 1500,
         });
+        setLoading(false);
       } else {
         localStorage.setItem("authToken", json.token);
         toast.success("Login Successful", {
@@ -55,10 +59,12 @@ function AdminLogin({ onAdminLoginSuccess }) {
         navigate("./admin",{
           state:{shop:credentials.shop}
         });
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error during submission:", error);
       toast.error("An error occurred while submitting the form.");
+      setLoading(false);
     }
   };
 
@@ -120,7 +126,12 @@ function AdminLogin({ onAdminLoginSuccess }) {
         </div>
 
         <div className="d-grid">
+          {loading ? (<button class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+          </button>) :(
           <button type="submit" className="btn btn-primary">Sign in</button>
+          )}
         </div>
 
         <hr />
