@@ -112,8 +112,8 @@ function AdminLogin({ onAdminLoginSuccess }) {
           >
             <option value="default">Select your shop</option>
             <option value="yummpy">Yummpy</option>
-            <option value="dominos">Domino's</option>
-            <option value="kathijunction">Kathijunction</option>
+            <option value="Dominos">Domino's</option>
+            <option value="Kathijunction">Kathijunction</option>
           </select>
         </div>
 
@@ -126,8 +126,8 @@ function AdminLogin({ onAdminLoginSuccess }) {
         </div>
 
         <div className="d-grid">
-          {loading ? (<button class="btn btn-primary" type="button" disabled>
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          {loading ? (<button className="btn btn-primary" type="button" disabled>
+            <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Loading...
           </button>) :(
           <button type="submit" className="btn btn-primary">Sign in</button>
