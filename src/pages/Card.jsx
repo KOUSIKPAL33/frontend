@@ -8,8 +8,8 @@ import baseurl from "../Url";
 function Card(props) {
     const { dispatch } = useContext(cartcontext)
     const renderStars = (rating) => {
-        const fullStar = "★"; // U+2605
-        const emptyStar = "☆"; // U+2606
+        const fullStar = "★"; 
+        const emptyStar = "☆";
         return fullStar.repeat(rating) + emptyStar.repeat(5 - rating);
     };
 

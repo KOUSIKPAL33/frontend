@@ -8,12 +8,12 @@ import baseurl from "../Url";
 import { cartcontext } from "../contexts/Contextprovider";
 import { userContext } from "../contexts/userContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser,faSignOut, faReceipt } from "@fortawesome/free-solid-svg-icons";
+import { faUser,faSignOut, faReceipt, faL } from "@fortawesome/free-solid-svg-icons";
 import AdminLogin from "../admin/AdminLogin";
 
 
 const Navbar = () => {
-  const token = localStorage.getItem("authToken");
+  
   const { cart, dispatch } = useContext(cartcontext)
   const { user, dispatchUser } = useContext(userContext)
   const [showProfile, setShowProfile] = useState(false);
@@ -43,43 +43,52 @@ const Navbar = () => {
     setShowModal(false);
     navigate("/");
   };
+  
 
+useEffect(() => {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    setIsLoggedIn(false);
+    localStorage.setItem("isLoggedIn", false);
+    return; 
+  }
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      if (isLoggedIn && token) {
-        try {
-          const response = await fetch(`${baseurl}/user`, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
+  const fetchUserDetails = async () => {
+    try {
+      const response = await fetch(`${baseurl}/user`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-          if (response.ok) {
-            const data = await response.json();
-            dispatch({ type: "SetCart", payload: data.cartItems });
-            dispatchUser({
-              type: "SET_USER",
-              payload: {
-                name: data.name,
-                mobile: data.mobileno,
-                email:data.email,
-                addresses: data.addresses,
-              },
-            });
-          } else {
-            setIsLoggedIn(false);
-            console.error("Failed to fetch user data");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
+      if (response.ok) {
+        const data = await response.json();
+        dispatch({ type: "SetCart", payload: data.cartItems });
+        dispatchUser({
+          type: "SET_USER",
+          payload: {
+            name: data.name,
+            mobile: data.mobileno,
+            email: data.email,
+            addresses: data.addresses,
+          },
+        });
+      } else {
+        setIsLoggedIn(false);
+        console.error("Failed to fetch user data");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      setIsLoggedIn(false);
+    }
+  };
+  if (isLoggedIn) {
     fetchUserDetails();
-  }, [isLoggedIn]);
+  }
+}, [isLoggedIn]);
+
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -122,13 +131,7 @@ const Navbar = () => {
               <li className="nav-item"><Link className="nav-link fs-5" to="/kathijunction">Kathijunction</Link> </li>
             </ul>
 
-            {!isLoggedIn ? (
-              <div className="d-flex gap-1">
-                <button className="btn btn-secondary" onClick={() => toggleModal("signup")}>Sign Up</button>
-                <button className="btn btn-primary" onClick={() => toggleModal("login")}>Login</button>
-                <button className="btn btn-danger" onClick={() => toggleModal("adminLogin")}>Admin</button>
-              </div>
-            ) : (
+            {isLoggedIn ? (
               <div>
                 <ul className="mt-2 d-flex gap-2">
                   <li className="position-relative">
@@ -159,6 +162,13 @@ const Navbar = () => {
 
 
                 </ul>
+              </div>
+              
+            ) : (
+              <div className="d-flex gap-1">
+                <button className="btn btn-secondary" onClick={() => toggleModal("signup")}>Sign Up</button>
+                <button className="btn btn-primary" onClick={() => toggleModal("login")}>Login</button>
+                <button className="btn btn-danger" onClick={() => toggleModal("adminLogin")}>Admin</button>
               </div>
             )}
           </div>

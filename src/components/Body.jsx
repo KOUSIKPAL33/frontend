@@ -4,6 +4,9 @@ import styles from "./body.module.css"
 function Body() {
   return (
     <div className="container" style={{ marginTop: "100px" }}>
+      {/* <section className="row">
+        <img src="./image/Header.png" alt="" />
+      </section> */}
       <section className="row">
         <div className="col">
           <div className={styles.faster}>More than Faster

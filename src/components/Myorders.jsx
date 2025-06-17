@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from './Navbar'
 import Myorderscard from './Myorderscard'
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import baseurl from '../Url';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faReceipt } from "@fortawesome/free-solid-svg-icons";
@@ -56,6 +56,7 @@ function Myorders() {
 
     fetchOrders();
   }, [token]);
+  console.log(orders);
   return (
     <>
       <Navbar />
@@ -92,17 +93,32 @@ function Myorders() {
                 <strong>Placed on:</strong> {new Date(order.createdAt).toLocaleString()}
               </p>
               <p className="mb-2"><strong>Delivery Location:</strong> {order.deliveryLocation}</p>
-
-              {/* Render Items */}
+              <hr />
               <div className="row flex-wrap gap-3">
-                {order.items.map((item, idx) => (
-                  <div key={idx} className="col-auto">
-                    <Myorderscard {...item} />
+
+                {order.ordersbyshop.map((itemsbyshop, idx) => (
+
+                  <div key={idx}>
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <h5 className="mb-3 fs-5">Shop Name: {itemsbyshop.shopName}</h5>
+                      <span className={`badge bg-${getStatusColor(order.status)} text-capitalize`}>
+                        {itemsbyshop.status}
+                      </span>
+                    </div>
+                    
+                    <div className="row flex-wrap gap-3">
+                      {itemsbyshop.items.map((item, idxx) => (
+                        <div key={idxx} className="col-auto">
+                          <Myorderscard {...item} />
+                        </div>
+                      ))}
+                    </div>
+                    <p><strong>ShopTotal: </strong>₹{itemsbyshop.shopTotal}</p>
+                    <hr />
                   </div>
                 ))}
               </div>
 
-              {/* Order Summary */}
               <div className="d-flex justify-content-between align-items-center mt-4">
                 <p><strong>Total Price:</strong> ₹{order.totalAmount}</p>
                 <span
