@@ -9,6 +9,7 @@ import { ToastContainer } from 'react-toastify'
 import Checkout from './components/Checkout'
 import AdminHome from './admin/AdminHome'
 import Myorders from './components/Myorders'
+import Contactus from "./pages/Contactus"
 
 function App() {
   const token = localStorage.getItem("authToken");
