@@ -56,7 +56,7 @@ function AdminLogin({ onAdminLoginSuccess }) {
           autoClose: 1500,
         });
         onAdminLoginSuccess();
-        navigate("./admin",{
+        navigate("/admin",{
           state:{shop:credentials.shop}
         });
         setLoading(false);

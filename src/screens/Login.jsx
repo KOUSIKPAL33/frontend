@@ -93,8 +93,8 @@ function Login({ onLoginSuccess, switchToSignup, switchToadminlogin, switchToFor
 
         </div>
         <div className="d-grid">
-          {loading ? <button class="btn btn-primary" type="button" disabled>
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          {loading ? <button className="btn btn-primary" type="button" disabled>
+            <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Loading...
           </button> : <button type="submit" className="btn btn-primary">Sign in</button>}
         </div>

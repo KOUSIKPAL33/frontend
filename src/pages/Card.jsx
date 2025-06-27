@@ -66,7 +66,7 @@ function Card(props) {
                         <div className="btn btn-secondary text-center">Price: {props.price}/-</div>
                         {props.available ? 
                         (<button className={'btn btn-primary'} onClick={handleCart} style={{cursor:"default"}}>Add to Cart </button>)
-                        :(<button type="button" class="btn btn-primary " style={{cursor:"not-allowed"}}>Not Available</button>)}
+                        :(<button type="button" className="btn btn-primary " style={{cursor:"not-allowed"}}>Not Available</button>)}
                         
 
                     </div>

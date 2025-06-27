@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import Card from './Card';
 import CardDominos from './CardDominos';
 import styles from './Shop.module.css';
+import { toast } from 'react-toastify';
 
 function ShowData({ apiEndpoint, shopName }) {
   const [foodItem, setFoodItem] = useState([]);
@@ -40,6 +41,8 @@ function ShowData({ apiEndpoint, shopName }) {
       setLoading(false);
     } catch (error) {
       console.error("Error loading data:", error);
+      setLoading(false);
+      toast.error("An error occurred while fetching the shop data");
     }
   };
   const getFilteredData = () => {
