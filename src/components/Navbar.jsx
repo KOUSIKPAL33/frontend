@@ -129,6 +129,7 @@ useEffect(() => {
               <li className="nav-item"><Link className="nav-link fs-5" to="/yummpy">Yummpy</Link></li>
               <li className="nav-item"><Link className="nav-link fs-5" to="/dominos">Domino's</Link></li>
               <li className="nav-item"><Link className="nav-link fs-5" to="/kathijunction">Kathijunction</Link> </li>
+              <li className="nav-item"><Link className="nav-link fs-5" to="/contact">Contact us</Link> </li>
             </ul>
 
             {isLoggedIn ? (
