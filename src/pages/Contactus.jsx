@@ -1,10 +1,13 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faMapMarkerAlt,faEnvelope,faPhone} from '@fortawesome/free-solid-svg-icons';
+import Navbar from '../components/Navbar';
 
 
 const Contactus = () => {
   return (
+    <>
+      <Navbar/>
     <div className="min-vh-100 py-5" style={{ backgroundColor: '#c4e7e8' }}>
       <div className="container">
         <div className="row bg-white rounded shadow p-4 mx-auto">
@@ -67,6 +70,7 @@ const Contactus = () => {
         </div>
       </div>
     </div>
+     </>
   );
 };
 
