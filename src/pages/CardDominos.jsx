@@ -72,7 +72,7 @@ function CardDominos(props) {
   return (
     <>
       <div style={{ width: '19rem' }} className='border border-primary shadow p-3 mb-5 bg-body rounded'>
-        <img src={props.imgSrc} className="card-img-top" style={{ height: '10rem', }} alt="kousik" />
+        <img src={`${baseurl.replace('/api', '')}/${props.imgSrc}`} className="card-img-top" style={{ height: '10rem', }} alt="kousik" />
         <div className="card-body">
           <h5 className="card-title">{props.name}</h5>
           <p className="card-text">Some quick example text.</p>
