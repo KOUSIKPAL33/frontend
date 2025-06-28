@@ -5,6 +5,7 @@ import CardDominos from './CardDominos';
 import styles from '../pages/Shop.module.css';
 import stylesoverlay from "../components/Navbar.module.css";
 import stylesform from "../screens/signup.module.css"
+import { toast } from 'react-toastify';
 
 function Showdata({ shop }) {
     const apiEndpoint = `${baseurl}/${shop}_data`;
@@ -13,13 +14,48 @@ function Showdata({ shop }) {
     const [foodItem, setFoodItem] = useState([]);
     const [filters, setFilters] = useState([]);
 
-    const [name, setName] = useState("");
-    const [price, setPrice] = useState(0);
+    const [name, setName] = useState('');
+    const [price, setPrice] = useState('');
+    const [image, setImage] = useState(null);
+    const [category, setCategory] = useState('');
 
-    const handleSubmit = (e) => {
+
+
+
+    const categoryOptions = filters.find(f => f.filterName === "Category")?.values || [];
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('price', price);
+        formData.append('shop', shop); // pass shop name or ID
+        formData.append('image', image);
+        formData.append('category', category);
+        try {
+            const response = await fetch(`${baseurl}/product/add`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+
+                setName('');
+                setPrice('');
+                setImage(null);
+                handleaAddSuccess();
+                toast.success("Product Added Succesfully.", {
+                    autoClose: 1500,
+                })
+            } else {
+                alert('Failed to add product');
+            }
+        } catch (err) {
+            console.error('Error:', err);
+        }
     };
+
 
     const [selectedFilters, setSelectedFilters] = useState({ Category: [], Name: [], });
 
@@ -89,7 +125,7 @@ function Showdata({ shop }) {
     const toggleModal = () => {
         setShowModal((prev) => !prev);
     };
-    
+
     useEffect(() => {
         loadData();
     }, [apiEndpoint]);
@@ -158,6 +194,8 @@ function Showdata({ shop }) {
                                                                 name={item.Name}
                                                                 options={item.Options}
                                                                 imgSrc={item.Image}
+                                                                available={item.Available}
+                                                                shopname={shop}
                                                             />
                                                         ) : (
                                                             <Card
@@ -190,7 +228,7 @@ function Showdata({ shop }) {
                         <button className={stylesoverlay.close_btn} onClick={() => setShowModal(false)}>✖</button>
                         <div className="container">
                             <h1 className={stylesform.heading}>Add New Product</h1>
-                            <form onSubmit={handleSubmit} className="container mt-4">
+                            <form onSubmit={handleSubmit} className="container mt-4" encType="multipart/form-data">
                                 <div className="mb-3">
                                     <label htmlFor="itemName" className="form-label">Item Name</label>
                                     <input
@@ -207,7 +245,7 @@ function Showdata({ shop }) {
                                     <label htmlFor="itemPrice" className="form-label">Price</label>
                                     <input
                                         type="number"
-                                        className={`${stylesform.mobile} form-control`}
+                                        className="form-control"
                                         id="itemPrice"
                                         value={price}
                                         onChange={(e) => setPrice(e.target.value)}
@@ -215,8 +253,39 @@ function Showdata({ shop }) {
                                     />
                                 </div>
 
-                                <div className="text-center"><button type="submit" className="btn btn-primary">Add Product</button></div>
+                                <div className="mb-3">
+                                    <label htmlFor="itemImage" className="form-label">Upload Image</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="form-control"
+                                        id="itemImage"
+                                        onChange={(e) => setImage(e.target.files[0])}
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="itemCategory" className="form-label">Category</label>
+                                    <select
+                                        id="itemCategory"
+                                        className="form-select"
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                        required
+                                    >
+                                        <option value="">-- Select Category --</option>
+                                        {categoryOptions.map((cat, idx) => (
+                                            <option key={idx} value={cat}>{cat}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+
+                                <div className="text-center">
+                                    <button type="submit" className="btn btn-primary">Add Product</button>
+                                </div>
                             </form>
+
                         </div>
                     </div>
                 </div>

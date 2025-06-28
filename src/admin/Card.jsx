@@ -13,19 +13,30 @@ function Card(props) {
     const [updatedName, setUpdatedName] = useState(props.name);
     const [updatedPrice, setUpdatedPrice] = useState(props.price);
     const [isAvailable, setIsAvailable] = useState(props.available);
+    const [updatedImage, setUpdatedImage] = useState(null);
 
-    const handleSubmit = async (e) => {
+    const handleUpdate = async (e) => {
         e.preventDefault();
-        console.log(updatedName, updatedPrice, isAvailable, props.shopname);
-        try {
-            const response = await axios.put(`${baseurl}/update/${props.pid}`, {
-                name: updatedName,
-                price: updatedPrice,
-                available: isAvailable,
-                shop_name: props.shopname,
-            });
+        // console.log(updatedName, updatedPrice, isAvailable, props.shopname);
+        const formData = new FormData();
+        formData.append('name', updatedName);
+        formData.append('price', updatedPrice);
+        formData.append('available', isAvailable);
+        formData.append('shop_name', props.shopname);
+        if (updatedImage) {
+            formData.append('image', updatedImage);
+        }
+         try {
+            const response = await axios.put( `${baseurl}/update/${props.pid}`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
 
-            toast.success("Product updated successfully!");
+            toast.success(response.data.message || "Product updated successfully!");
             setTimeout(() => {
                 window.location.reload();
             }, 1000);
@@ -50,8 +61,10 @@ function Card(props) {
                     data: { shop_name: props.shopname }
                 });
 
-                toast.success("Product deleted successfully!");
-                // Optionally, you can trigger a reload or inform the parent to remove this card
+                toast.success(response.message || "Product deleted successfully!");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             } catch (error) {
                 toast.error("Failed to delete product");
                 console.error("Delete error:", error);
@@ -64,7 +77,7 @@ function Card(props) {
             <div>
                 <ToastContainer />
                 <div className={'border border-primary shadow p-3 mb-5 bg-body rounded' + styles.myzoom} style={{ width: '16.5rem' }}>
-                    <img src={'./' + props.imgSrc} className="card-img-top" style={{ height: '12rem' }} alt={props.name} />
+                    <img src={`${baseurl.replace('/api', '')}/${props.imgSrc}`} className="card-img-top" style={{ height: '12rem' }} alt={props.name} />
                     <div className="card-body">
                         <h5 className="card-title text-wrap">{props.name}</h5>
                         <p className="card-text m-0">Some Description </p>
@@ -92,7 +105,7 @@ function Card(props) {
                         <button className={stylesoverlay.close_btn} onClick={() => setShowModal(false)}>✖</button>
                         <div className="container">
                             <h1 className={stylesform.heading}>Update Product</h1>
-                            <form onSubmit={handleSubmit} className="container mt-4">
+                            <form onSubmit={handleUpdate} className="container mt-4">
                                 <div className="mb-3">
                                     <label htmlFor="itemName" className="form-label">Item Name</label>
                                     <input
@@ -145,6 +158,19 @@ function Card(props) {
                                             <label className="form-check-label" htmlFor="notAvailable">Not Available</label>
                                         </div>
                                     </div>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="itemImage" className="form-label">Product Image</label>
+                                    <input
+                                        type="file"
+                                        className="form-control"
+                                        id="itemImage"
+                                        accept="image/*"
+                                        onChange={(e) => setUpdatedImage(e.target.files[0])}
+                                    />
+                                    <small className="form-text text-muted">
+                                        Leave blank to keep current image.
+                                    </small>
                                 </div>
                                 <button type="submit" className="btn btn-primary">Update</button>
                             </form>

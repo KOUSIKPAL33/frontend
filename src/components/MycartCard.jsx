@@ -82,7 +82,7 @@ function MycartCard({ product, slno }) {
       <td>{product.name}</td>
       <td>
         <img
-          src={'./' + product.imgSrc}
+          src={`${baseurl.replace('/api', '')}/${props.imgSrc}`}
           alt={product.name}
           style={{ width: '180px', height: '140px', padding: '5px' }}
         />

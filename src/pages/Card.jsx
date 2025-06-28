@@ -8,8 +8,8 @@ import baseurl from "../Url";
 function Card(props) {
     const { dispatch } = useContext(cartcontext)
     const renderStars = (rating) => {
-        const fullStar = "★"; 
-        const emptyStar = "☆";
+        const fullStar = "★"; // U+2605
+        const emptyStar = "☆"; // U+2606
         return fullStar.repeat(rating) + emptyStar.repeat(5 - rating);
     };
 
@@ -58,7 +58,7 @@ function Card(props) {
         <div>
             <ToastContainer />
             <div className={'border border-primary shadow p-3 mb-5 bg-body rounded' + styles.myzoom} style={{ width: '16.5rem' }}>
-                <img src={'./' + props.imgSrc} className="card-img-top" style={{ height: '12rem' }} alt={props.name} />
+                <img src={`${baseurl.replace('/api', '')}/${props.imgSrc}`} className="card-img-top" style={{ height: '12rem' }} alt={props.name} />
                 <div className="card-body">
                     <h5 className="card-title text-wrap">{props.name}</h5>
                     <p className="card-text">Rating: {renderStars(4)} (4/5)</p>

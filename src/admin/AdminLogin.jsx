@@ -112,8 +112,8 @@ function AdminLogin({ onAdminLoginSuccess }) {
           >
             <option value="default">Select your shop</option>
             <option value="yummpy">Yummpy</option>
-            <option value="Dominos">Domino's</option>
-            <option value="Kathijunction">Kathijunction</option>
+            <option value="dominos">Domino's</option>
+            <option value="kathijunction">Kathijunction</option>
           </select>
         </div>
 
