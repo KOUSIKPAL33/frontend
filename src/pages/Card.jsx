@@ -43,20 +43,19 @@ function Card(props) {
             );
             if (response.data.success) {
                 dispatch({ type: "Add", product: props });
-                toast.success("Item added to cart!", { autoClose: 1500, position: "bottom-right" });
+                toast.success("Item added to cart!", { autoClose: 1500 });
             }
         } catch (error) {
             if (error.response && error.response.status === 400 && error.response.data.message === "Item already in cart") {
-                toast.info('Item is already in the cart.');
+                toast.info('Item is already in the cart.', { autoClose: 1500 });
             } else {
                 console.error("Error adding to cart:", error);
-                toast.error('Something went wrong. Please try again.');
+                toast.error('Something went wrong. Please try again.', { autoClose: 1500 });
             }
         }
     }
     return (
         <div>
-            <ToastContainer />
             <div className={'border border-primary shadow p-3 mb-5 bg-body rounded' + styles.myzoom} style={{ width: '16.5rem' }}>
                 <img src={`${baseurl.replace('/api', '')}/${props.imgSrc}`} className="card-img-top" style={{ height: '12rem' }} alt={props.name} />
                 <div className="card-body">
