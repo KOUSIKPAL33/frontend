@@ -18,6 +18,10 @@ function Card(props) {
     const handleUpdate = async (e) => {
         e.preventDefault();
         // console.log(updatedName, updatedPrice, isAvailable, props.shopname);
+        if (!updatedName || !updatedPrice) {
+            toast.error("Please fill in all fields");
+            return;
+        }
         const formData = new FormData();
         formData.append('name', updatedName);
         formData.append('price', updatedPrice);

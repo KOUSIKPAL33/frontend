@@ -46,8 +46,6 @@ function Showorders({ shop }) {
 
     if (token && shop) fetchOrders();
   }, [token, shop]);
-
-  console.log("orders are ", orders)
   return (
     <div style={{ backgroundColor: "#f1f3f6", marginTop: '5rem', width: "max-content" }} className='container'>
       <h1

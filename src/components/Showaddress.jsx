@@ -25,12 +25,13 @@ function Showaddress(props) {
 
       if (response.data.success) {
         toast.success("Address deleted successfully", {
-          theme: "colored",
           autoClose:1500,
         })
         props.onDelete(props.id);
       } else {
-        console.log("Failed to delete item:", response.data.message);
+        toast.error("Failed to delete address", {
+          autoClose:1500,
+        });
       }
     } catch (error) {
       console.error("Error deleting item:", error);
@@ -48,7 +49,6 @@ function Showaddress(props) {
         <p className='m-0 p-3 pb-0'>{props.location}</p>
       </div>
       <div className='d-flex flex-column gap-2' >
-        <button type="submit" className='btn btn-primary'>Deliver Here</button>
         <button type='button' className='btn btn-danger' onClick={handleDelete}>Delete </button>
       </div>
 

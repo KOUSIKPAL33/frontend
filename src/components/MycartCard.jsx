@@ -99,7 +99,7 @@ function MycartCard({ product, slno }) {
       </td>
       <td>Rs. {product.quantity * product.price}/-</td>
       <td style={{ width: '70px' }}>
-        <button className='btn btn-warning' onClick={handleDelete}>Delete</button>
+        <button className='btn btn-danger' onClick={handleDelete}>Delete</button>
       </td>
     </>
   );

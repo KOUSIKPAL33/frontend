@@ -10,6 +10,7 @@ import Checkout from './components/Checkout'
 import AdminHome from './admin/AdminHome'
 import Myorders from './components/Myorders'
 import Contactus from "./pages/Contactus"
+import Profile from './components/Profile'
 
 function App() {
   const token = localStorage.getItem("authToken");
@@ -28,6 +29,7 @@ function App() {
             <Route exact path='/Checkout' element={token?<Checkout />:<Home/>} />
             <Route exact path='/admin' element={<AdminHome />} />
             <Route exact path='/contact' element ={<Contactus/>}/>
+            <Route exact path='/profile' element ={<Profile/>}/>
           </Routes>
         </div>
       </Router>

@@ -8,6 +8,7 @@ const initialState = {
   mobile: "",
   email:"",
   addresses:[],
+  profileImage: "",
 };
 
 const UserProvider = ({ children }) => {
