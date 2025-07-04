@@ -30,7 +30,9 @@ function SavedAddresses() {
                 }
             }
             );
-            if (!response) { console.log("error in response"); return; }
+            if (!response) { 
+                toast.error("Failed to add address", { autoClose: 1500, });
+            return; }
             toast.success("Address is added successfully", { autoClose: 1500, })
             setAddress({ name: "", mobileno: "", location: "", });
             setAddresses([...addresses, addressDetails.addressDetails]);

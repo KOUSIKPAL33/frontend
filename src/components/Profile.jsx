@@ -8,7 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faSignOut, faReceipt, faEdit, faUserEdit, faCreditCard, faAddressBook, faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 import baseurl from "../Url";
 import { toast } from 'react-toastify';
-// Dummy components for demonstration
+
+
 const EditPersonalInfo = ({ user, onUpdate }) => {
     const fileInputRef = useRef(null);
     const [form, setForm] = useState({
@@ -186,7 +187,7 @@ function Profile() {
             if (file) {
                 formData.append("image", file);
             }
-            console.log("formData", formData);
+
             const response = await fetch(`${baseurl}/update-profile`, {
                 method: "PUT",
                 headers: {

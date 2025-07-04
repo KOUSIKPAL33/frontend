@@ -47,10 +47,12 @@ function MycartCard({ product, slno }) {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
-      console.log("No token found. User might not be authenticated.");
+      toast.error("You are not logged in", {
+        autoClose: 1500
+      });
       return;
     }
-    console.log(product.productId)
+    
     try {
       const response = await axios.delete(`${baseurl}/cart/delete`,
         {
@@ -69,7 +71,9 @@ function MycartCard({ product, slno }) {
           autoClose: 1500
         })
       } else {
-        console.log("Failed to delete item:", response.data.message);
+        toast.error('Failed to delete item', {
+          autoClose: 1500
+        });
       }
     } catch (error) {
       console.error("Error deleting item:", error);

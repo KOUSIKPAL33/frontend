@@ -9,7 +9,9 @@ function Showaddress(props) {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
-      console.log("No token found. User might not be authenticated.");
+      toast.error("You are not logged in", {
+        autoClose: 1500,
+      });
       return;
     }
 

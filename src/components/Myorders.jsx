@@ -26,7 +26,7 @@ function Myorders() {
     }
   };
   const handleCancelOrder = () => {
-    console.log("button clicked")
+    console.log("button clicked");
   };
 
   useEffect(() => {
@@ -56,7 +56,6 @@ function Myorders() {
 
     fetchOrders();
   }, [token]);
-  console.log(orders);
   return (
     <>
       <Navbar />
