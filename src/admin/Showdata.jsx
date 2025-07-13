@@ -24,7 +24,7 @@ function Showdata({ shop }) {
 
     const categoryOptions = filters.find(f => f.filterName === "Category")?.values || [];
 
-    const handleSubmit = async (e) => {
+    const handleAddProduct = async (e) => {
         e.preventDefault();
 
         const formData = new FormData();
@@ -228,7 +228,7 @@ function Showdata({ shop }) {
                         <button className={stylesoverlay.close_btn} onClick={() => setShowModal(false)}>✖</button>
                         <div className="container">
                             <h1 className={stylesform.heading}>Add New Product</h1>
-                            <form onSubmit={handleSubmit} className="container mt-4" encType="multipart/form-data">
+                            <form onSubmit={handleAddProduct} className="container mt-4" encType="multipart/form-data">
                                 <div className="mb-3">
                                     <label htmlFor="itemName" className="form-label">Item Name</label>
                                     <input

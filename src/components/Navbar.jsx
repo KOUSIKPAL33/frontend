@@ -62,7 +62,7 @@ const Navbar = () => {
             "Content-Type": "application/json",
           },
         });
-        if (response.status === 401) {
+        if (response.status === 401 || response.status === 403) {
           // Token expired or invalid
           localStorage.removeItem("authToken");
           localStorage.setItem("isLoggedIn", false);
@@ -251,6 +251,7 @@ const Navbar = () => {
                 />
               ) : activeForm === "signup" ? (
                 <Signup
+                  onLoginSuccess={handleLoginSuccess}
                   switchToLogin={() => setActiveForm("login")}
                   onSignupSuccess={() => setShowModal(false)}
                 />

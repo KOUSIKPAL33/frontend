@@ -5,12 +5,13 @@ import baseurl from "../Url";
 import styles from "./signup.module.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook, faTwitter, faLinkedin, faGoogle } from "@fortawesome/free-brands-svg-icons";
-
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 function Login({ onLoginSuccess, switchToSignup, switchToadminlogin, switchToForgotpassord }) {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const handleSubmit = async (e) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const handleLogin = async (e) => {
     setLoading(true);
     e.preventDefault();
     try {
@@ -28,20 +29,12 @@ function Login({ onLoginSuccess, switchToSignup, switchToadminlogin, switchToFor
       const responseText = await response.text();
       const json = responseText ? JSON.parse(responseText) : {};
       if (!json.success) {
-        toast.error("Enter valid credentials.", {
-          position: "top-center",
-          theme: "colored",
-          autoClose: 1500,
-        });
+        toast.error("Enter valid credentials.", {position: "top-center",theme: "colored",autoClose: 1500,});
         setLoading(false);
       } else {
         localStorage.setItem("isLoggedIn", true);
         localStorage.setItem("authToken", json.token);
-        toast.success("Login Successful", {
-          theme: "colored",
-          position: "top-center",
-          autoClose: 1500,
-        })
+        toast.success("Login Successful", {theme: "colored",position: "top-center",autoClose: 1500,})
         onLoginSuccess();
         setLoading(false);
       }
@@ -57,8 +50,8 @@ function Login({ onLoginSuccess, switchToSignup, switchToadminlogin, switchToFor
 
   return (
     <div className="container">
-      <h1 className={styles.heading}>Sign in</h1>
-      <form onSubmit={handleSubmit}>
+      <h1 className={styles.heading}>Welcome Back</h1>
+      <form onSubmit={handleLogin}>
         <div className="form-floating mb-3 mt-3" >
           <input
             type="email"
@@ -71,17 +64,23 @@ function Login({ onLoginSuccess, switchToSignup, switchToadminlogin, switchToFor
           />
           <label htmlFor="email"> Email address</label>
         </div>
-        <div className="form-floating mb-3 mt-3">
+        <div className="form-floating  mb-3 mt-3">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             className={`${styles.bottom_border} form-control`}
-            name="password"
+            name='password'
             value={credentials.password}
             onChange={onChangeHandler}
-            placeholder="password"
+            placeholder='Password'
             required
           />
-          <label htmlFor="password">Password</label>
+          <label htmlFor="exampleInputPassword1" >Password</label>
+          <span
+            style={{position: "absolute", right: "20px",top: "50%",transform: "translateY(-50%)",cursor: "pointer",zIndex: 10}}
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+          </span>
         </div>
         <div className="mb-3 d-flex justify-content-between">
           <div>

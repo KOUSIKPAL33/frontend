@@ -1,13 +1,16 @@
-import React from 'react'
+import React from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 
-
-function Navbar({ shop,setActiveTab,activeTab}) {
+function Navbar({ shop }) {
   const token = localStorage.getItem("authToken");
   const navigate = useNavigate();
+  const getActiveClass = (path) =>
+    location.pathname.includes(path) ? "active text-white" : "text-secondary";
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("shop");
     navigate("/");
   };
   return (
@@ -27,8 +30,15 @@ function Navbar({ shop,setActiveTab,activeTab}) {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mx-auto">
-            <li className={`nav-item nav-link fs-5 ${activeTab === 'products' ? 'active' : ''}`} style={{cursor:"pointer"}} onClick={() => setActiveTab('products')}>Show Products</li>
-            <li className={`nav-item nav-link fs-5 ${activeTab === 'orders' ? 'active' : ''}`} style={{ cursor: 'pointer' }} onClick={() => setActiveTab('orders')}>New Orders</li>
+            <li className={`nav-item nav-link fs-5`}>
+              <Link className={`text-decoration-none ${getActiveClass("dashboard")}`} to="dashboard">Home</Link>
+            </li>
+            <li className="nav-item nav-link fs-5">
+              <Link className={`text-decoration-none ${getActiveClass("products")}`} to="products">Products</Link>
+            </li>
+            <li className="nav-item nav-link fs-5">
+              <Link className={`text-decoration-none ${getActiveClass("orders")}`} to="orders">Orders</Link>
+            </li>
           </ul>
           {token ? (
             <div className="d-flex gap-1">
@@ -36,15 +46,12 @@ function Navbar({ shop,setActiveTab,activeTab}) {
               <li className="btn btn-danger" onClick={handleLogout}>Logout</li>
             </div>
           ) : (
-            <div>
-              not token
-            </div>
+            <div>not token</div>
           )}
         </div>
-
       </div>
     </nav>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;

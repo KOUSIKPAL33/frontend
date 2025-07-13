@@ -1,32 +1,21 @@
-import React, { useState } from 'react';
-import { useLocation } from "react-router-dom";
+import React from 'react';
+import { useLocation, Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
-import Showdata from './Showdata';
-import ShowOrders from './Showorders';
+import { ToastContainer } from 'react-toastify';
 
 function AdminHome() {
-  const location = useLocation();
-  const shop = location.state?.shop || "default";
-  const [activeTab, setActiveTab] = useState('products');
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'products':
-        return <Showdata shop={shop} />;
-      case 'orders':
-        return <ShowOrders shop={shop} />;
-      default:
-        return <Showdata shop={shop} />;
-    }
-  };
+  const shop = localStorage.getItem("shop") || "defaultShop";
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <Navbar shop={shop} setActiveTab={setActiveTab} activeTab={activeTab}/>
-      <div style={{ padding: '20px', overflowY: 'auto', flex: 1 }}>
-        {renderContent()}
+    <>
+      <ToastContainer />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Navbar shop={shop} />
+        <div style={{ padding: '20px', overflowY: 'auto', flex: 1 }}>
+          <Outlet/>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

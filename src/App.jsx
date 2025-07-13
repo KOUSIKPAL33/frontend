@@ -12,6 +12,10 @@ import Myorders from './components/Myorders'
 import Contactus from "./pages/Contactus"
 import Profile from './components/Profile'
 
+import DashboardWrapper from './admin/DashboardWrapper';
+import ShowdataWrapper from './admin/ShowdataWrapper';
+import ShowOrdersWrapper from './admin/ShowOrdersWrapper';
+
 function App() {
   const token = localStorage.getItem("authToken");
   return (
@@ -24,12 +28,19 @@ function App() {
             <Route exact path='/yummpy' element={<Yummpy />} />
             <Route exact path='/dominos' element={<Dominos />} />
             <Route exact path='/kathijunction' element={<Kathijunction />} />
-            <Route exact path='/Mycart' element={ token? <Mycart />:<Home/>} />
-            <Route exact path='/Myorders' element={ token? <Myorders />:<Home/>} />
-            <Route exact path='/Checkout' element={token?<Checkout />:<Home/>} />
+            <Route exact path='/Mycart' element={token ? <Mycart /> : <Home />} />
+            <Route exact path='/Myorders' element={token ? <Myorders /> : <Home />} />
+            <Route exact path='/Checkout' element={token ? <Checkout /> : <Home />} />
             <Route exact path='/admin' element={<AdminHome />} />
-            <Route exact path='/contact' element ={<Contactus/>}/>
-            <Route exact path='/profile' element ={<Profile/>}/>
+            <Route exact path='/contact' element={<Contactus />} />
+            <Route exact path='/profile' element={<Profile />} />
+
+            <Route path="/admin" element={<AdminHome />}>
+              <Route index element={<DashboardWrapper />} />
+              <Route path="dashboard" element={<DashboardWrapper />} />
+              <Route path="products" element={<ShowdataWrapper />} />
+              <Route path="orders" element={<ShowOrdersWrapper />} />
+            </Route>
           </Routes>
         </div>
       </Router>

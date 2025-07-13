@@ -1,13 +1,14 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar'
 import SavedAddresses from './SavedAddresses';
 import { userContext } from "../contexts/userContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faSignOut, faReceipt, faEdit, faUserEdit, faCreditCard, faAddressBook, faBoxOpen } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faSignOut, faReceipt, faEdit, faUserEdit, faCreditCard, faAddressBook, faBoxOpen, faDashboard } from "@fortawesome/free-solid-svg-icons";
 import baseurl from "../Url";
 import { toast } from 'react-toastify';
+import SpendingBarChart from './SpendingBarChart';
 
 
 const EditPersonalInfo = ({ user, onUpdate }) => {
@@ -169,15 +170,117 @@ const SavedCards = () => {
         </div>
     );
 };
+const Dashboard = () => {
+    const token = localStorage.getItem("authToken");
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchOrders = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(`${baseurl}/order/get`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setOrders(data);
+                } else {
+                    console.error("Failed to fetch orders");
+                }
+            } catch (error) {
+                console.error("Error fetching orders:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOrders();
+    }, [token]);
+
+    const totalSpent = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+
+    const formatDate = (isoDate) =>
+        new Date(isoDate).toLocaleDateString("en-IN", {
+            day: "numeric", month: "short", year: "numeric",
+        });
+
+    return (
+        <div className="card p-4">
+            <h3 className="mb-4">Dashboard</h3>
+
+            {loading ? (
+                <div className="text-center">Loading orders...</div>
+            ) : (
+                <>
+                    {/* Summary Section */}
+                    <div className="mb-4">
+                        <div className="row text-center d-flex justify-content-around g-3">
+                            <div className="col-sm-6 p-3" style={{ background: "linear-gradient(135deg,rgb(124, 131, 163) 0%, #764ba2 100%)", width: "30%", color: "#fff", borderRadius: "10px" }}>
+                                <h5>Total Orders</h5>
+                                <p className="fs-4 fw-semibold" >{orders.length}</p>
+                            </div>
+                            <div className="col-sm-6 p-3" style={{ background: "linear-gradient(135deg, #f7971e 0%, #ffd200 100%)", width: "30%", color: "#fff", borderRadius: "10px" }}>
+                                <h5>Total Spent</h5>
+                                <p className="fs-4 fw-semibold">₹{totalSpent}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Recent Orders */}
+                    <h5 className="mb-3">Recent Orders</h5>
+                    {orders.length === 0 && (
+                        <div className="text-center text-muted mt-4">
+                            No order placed yet.
+                        </div>
+                    )}
+                    {orders.length > 0 && orders.slice(0, 3).map((order) => (
+                        <div key={order._id} className="border rounded p-3 mb-3 shadow-sm">
+                            <div className="row">
+
+                                <div><strong>Order Date:</strong> {formatDate(order.createdAt)}</div>
+
+                                <div><strong>Total:</strong> ₹{order.totalAmount}</div>
+
+                                <div><strong>Shops:</strong>{" "}
+                                    {order.ordersbyshop.map((s) => s.shopName).join(", ")}</div>
+
+                                <div><span
+                                    className={`badge bg-${order.status === "delivered"
+                                        ? "success"
+                                        : order.status === "out for delivery"
+                                            ? "info"
+                                            : "secondary"
+                                        } text-lowercase`}
+                                    style={{ fontSize: "0.85rem" }}
+                                >
+                                    {order.status}
+                                </span></div>
+                            </div>
+                        </div>
+                    ))}
+                    {/*charts*/}
+                    <div>
+                        <SpendingBarChart orders={orders} />
+                    </div>
+
+                </>
+            )}
+        </div>
+    );
+};
 
 function Profile() {
     const { user, dispatchUser } = useContext(userContext);
     const [preview, setPreview] = useState(user.profileImage || "");
-    const fileInputRef = useRef(null);
-    const [activeTab, setActiveTab] = useState("edit");
-
-    // Handle update of personal info and image
-    const handleUpdate = async (form, file) => {
+    const [activeTab, setActiveTab] = useState("dashboard");
+    const navigate = useNavigate();
+    const handleUpdateProfile = async (form, file) => {
         try {
             const token = localStorage.getItem("authToken");
             const formData = new FormData();
@@ -222,101 +325,104 @@ function Profile() {
 
         }
     };
-
-    // Update image in left profile card when changed in form
     const handleImageUpdate = (img) => {
         setPreview(img);
     };
-
-    // Render right content based on activeTab
     let rightContent = (
         <div className="text-center text-muted mt-5">
             <span>Select an option from the left menu.</span>
         </div>
     );
-    if (activeTab === "edit") rightContent = <EditPersonalInfo user={user} onUpdate={handleUpdate} onImageUpdate={handleImageUpdate} />;
+    if (activeTab === "dashboard") rightContent = <Dashboard user={user} />;
+    if (activeTab === "edit") rightContent = <EditPersonalInfo user={user} onUpdate={handleUpdateProfile} onImageUpdate={handleImageUpdate} />;
     if (activeTab === "cards") rightContent = <SavedCards />;
     if (activeTab === "addresses") rightContent = <SavedAddresses />;
+
+    const handleLogout = () => {
+        localStorage.setItem("isLoggedIn", false);
+        localStorage.removeItem("authToken");
+        navigate("/", { replace: true });
+        window.location.reload();
+    };
 
     return (
         <>
             <Navbar />
             <div className="container pt-5 mt-5">
                 <div className="row">
-                    {/* Left Side */}
-                    <div className="col-md-4 mb-4 d-flex justify-content-center align-items-center">
-                        <div className="bg-light rounded p-4 text-center w-100">
+                    {/* Fixed Left Sidebar */}
+                    <div className="col-md-4 mb-4">
+                        <div
+                            className="bg-light rounded p-4 text-center"
+                            style={{
+                                position: "sticky",
+                                top: "100px",
+                                zIndex: 1
+                            }}
+                        >
                             <div className="position-relative mx-auto mb-3" style={{ width: 100, height: 100 }}>
                                 {preview ? (
                                     <img
                                         src={`${baseurl.replace('/api', '')}${preview}`}
                                         alt="Profile"
                                         className="rounded-circle"
-                                        style={{ width: 100, height: 100, objectFit: "cover", border: "2px solid #007bff" }}
+                                        style={{
+                                            width: 100,
+                                            height: 100,
+                                            objectFit: "cover",
+                                            border: "2px solid #007bff"
+                                        }}
                                     />
                                 ) : (
-                                    <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                                        style={{ width: 100, height: 100, fontSize: 40, fontWeight: "bold", border: "2px solid #007bff" }}>
+                                    <div
+                                        className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                        style={{
+                                            width: 100,
+                                            height: 100,
+                                            fontSize: 40,
+                                            fontWeight: "bold",
+                                            border: "2px solid #007bff"
+                                        }}
+                                    >
                                         {user.name && user.name[0] ? user.name[0].toUpperCase() : <FontAwesomeIcon icon={faUser} />}
                                     </div>
                                 )}
-                                {/* Edit icon */}
-                                <button
-                                    className="btn btn-sm btn-light position-absolute"
-                                    style={{ bottom: 0, right: 0, borderRadius: "50%", border: "1px solid #007bff" }}
-                                    onClick={() => fileInputRef.current.click()}
-                                    title="Edit Profile Image"
-                                >
-                                    <FontAwesomeIcon icon={faEdit} />
-                                </button>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    ref={fileInputRef}
-                                    style={{ display: "none" }}
-                                    onChange={(e) => setUpdatedImage(e.target.files[0])}
-                                />
                             </div>
-                            {/* User Info */}
                             <div className="mt-3">
                                 <h4 className="mb-1">{user.name}</h4>
                                 <div className="text-muted">{user.mobile}</div>
                                 <div className="text-muted mb-1">{user.email}</div>
                             </div>
-                            {/* Links */}
                             <div className="list-group mt-4">
-                                <button
-                                    className="list-group-item list-group-item-action d-flex align-items-center gap-2"
-                                    onClick={() => setActiveTab("edit")}
-                                >
+                                <button className="list-group-item list-group-item-action d-flex align-items-center gap-2" onClick={() => setActiveTab("dashboard")}>
+                                    <FontAwesomeIcon icon={faDashboard} /> Dashboard
+                                </button>
+                                <button className="list-group-item list-group-item-action d-flex align-items-center gap-2" onClick={() => setActiveTab("edit")}>
                                     <FontAwesomeIcon icon={faUserEdit} /> Edit Personal Information
                                 </button>
-                                <button
-                                    className="list-group-item list-group-item-action d-flex align-items-center gap-2"
-                                    onClick={() => setActiveTab("cards")}
-                                >
+                                <button className="list-group-item list-group-item-action d-flex align-items-center gap-2" onClick={() => setActiveTab("cards")}>
                                     <FontAwesomeIcon icon={faCreditCard} /> Saved Cards
                                 </button>
-                                <button
-                                    className="list-group-item list-group-item-action d-flex align-items-center gap-2"
-                                    onClick={() => setActiveTab("addresses")}
-                                >
+                                <button className="list-group-item list-group-item-action d-flex align-items-center gap-2" onClick={() => setActiveTab("addresses")}>
                                     <FontAwesomeIcon icon={faAddressBook} /> Saved Addresses
                                 </button>
                                 <Link to="/myorders" className="list-group-item list-group-item-action d-flex align-items-center gap-2">
                                     <FontAwesomeIcon icon={faBoxOpen} /> My Orders
                                 </Link>
-                                <button className="list-group-item list-group-item-action d-flex align-items-center gap-2 text-danger" style={{ border: "none", background: "none" }}>
-                                    <FontAwesomeIcon icon={faSignOut} />Logout
+                                <button className="list-group-item list-group-item-action d-flex align-items-center gap-2 text-danger" style={{ border: "none", background: "none" }}
+                                    onClick={handleLogout}>
+                                    <FontAwesomeIcon icon={faSignOut} /> Logout
                                 </button>
                             </div>
                         </div>
                     </div>
-                    {/* Right Side */}
+
+                    {/* Scrollable Right Content */}
                     <div className="col-md-8">
                         {rightContent}
                     </div>
                 </div>
+
             </div>
         </>
     )

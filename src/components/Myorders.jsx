@@ -91,7 +91,16 @@ function Myorders() {
               <p className="mb-1">
                 <strong>Placed on:</strong> {new Date(order.createdAt).toLocaleString()}
               </p>
-              <p className="mb-2"><strong>Delivery Location:</strong> {order.deliveryLocation}</p>
+
+              <div className="d-flex justify-content-between align-items-center">
+                <p><strong>Delivery Location:</strong> </p>
+                <p><strong>Name: </strong> {order.deliveryLocation.name}</p>
+                <p><strong>Mobile: </strong>{order.deliveryLocation.mobileno} </p>
+                <p><strong>Address: </strong>{order.deliveryLocation.location}</p>
+              </div>
+
+
+
               <hr />
               <div className="row flex-wrap gap-3">
 
@@ -104,7 +113,7 @@ function Myorders() {
                         {itemsbyshop.status}
                       </span>
                     </div>
-                    
+
                     <div className="row flex-wrap gap-3">
                       {itemsbyshop.items.map((item, idxx) => (
                         <div key={idxx} className="col-auto">

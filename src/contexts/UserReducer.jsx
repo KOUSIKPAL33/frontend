@@ -7,7 +7,7 @@ const UserReducer = (state, action) => {
           mobile: action.payload.mobile,
           email:action.payload.email,
           addresses: action.payload.addresses,
-          profileImage: action.payload.profileImage || "",
+          profileImage: action.payload.profileImage,
         };
       case "CLEAR_USER":
         return {

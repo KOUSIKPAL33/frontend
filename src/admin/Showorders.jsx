@@ -14,7 +14,7 @@ function Showorders({ shop }) {
     switch (status) {
       case 'pending':
         return 'warning';
-      case 'preparing': 
+      case 'preparing':
         return 'info';
       case 'out for delivery':
         return 'primary';
@@ -45,9 +45,9 @@ function Showorders({ shop }) {
     };
 
     if (token && shop) fetchOrders();
-  }, [token, shop]);
+  }, [token, shop]);  
   return (
-    <div style={{ backgroundColor: "#f1f3f6", marginTop: '5rem', width: "max-content" }} className='container'>
+    <div style={{ backgroundColor: "#f1f3f6", marginTop: '5rem' }} className='container'>
       <h1
         className="text-center fw-bold fs-1 text-primary"
         style={{
@@ -59,35 +59,41 @@ function Showorders({ shop }) {
       ><FontAwesomeIcon icon={faReceipt} className="me-2" />  New Orders
       </h1>
       {orders && orders.length > 0 ? (
-        orders.map((order, idx) => (
-          <div key={order.orderId || idx} className="bg-white shadow-sm p-3 mb-4 rounded border">
-            <div className="mb-2">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <h5 className="mb-0"><strong>Customer:</strong> {order.user.name} ({order.user.mobile})</h5>
-                <span className={`badge bg-${getStatusColor(order.shopOrder.status)} text-capitalize`}>
-                  {order.shopOrder.status}
-                </span>
+        orders
+          .filter(order => ['pending', 'preparing', 'out for delivery'].includes(order.shopOrder.status))
+          .map((order, idx) => (
+            <div key={order.orderId || idx} className="bg-white shadow-sm p-3 mb-4 rounded border">
+              <div className="mb-2">
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <h5 className="mb-0"><strong>Customer:</strong> {order.user.name} ({order.user.mobile})</h5>
+                  <span className={`badge bg-${getStatusColor(order.shopOrder.status)} text-capitalize`}>
+                    {order.shopOrder.status}
+                  </span>
+                </div>
+
+                <div className="d-flex justify-content-between align-items-center">
+                  <p><strong>Delivery Location: Name: </strong> {order.deliveryLocation.name}</p>
+                  <p><strong>Mobile: </strong>{order.deliveryLocation.mobileno} </p>
+                  <p><strong>Address: </strong>{order.deliveryLocation.location}</p>
+                </div>
+                <p className="mb-2"><strong>Placed On:</strong> {new Date(order.createdAt).toLocaleString()}</p>
               </div>
-    
-              <p className="mb-1"><strong>Delivery Location:</strong> {order.deliveryLocation}</p>
-              <p className="mb-2"><strong>Placed On:</strong> {new Date(order.createdAt).toLocaleString()}</p>
-              
-            </div>
 
-            <div className="d-flex flex-wrap gap-3">
-              {order.shopOrder.items.map((item, idx2) => (
-                <Myorderscard key={idx2} {...item} shopName={order.shopOrder.shopName} />
-              ))}
-            </div>
+              <div className="d-flex flex-wrap gap-3">
+                {order.shopOrder.items.map((item, idx2) => (
+                  <Myorderscard key={idx2} {...item} shopName={order.shopOrder.shopName} />
+                ))}
+              </div>
 
-            <div className="mt-3 d-flex justify-content-end">
-              <h5>Total: ₹{order.shopOrder.shopTotal}</h5>
+              <div className="mt-3 d-flex justify-content-end">
+                <h5>Total: ₹{order.shopOrder.shopTotal}</h5>
+              </div>
             </div>
-          </div>
-        ))
+          ))
       ) : (
         <p className="text-center text-muted">No new orders.</p>
       )}
+
     </div>
   );
 }

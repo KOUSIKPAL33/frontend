@@ -69,8 +69,6 @@ function Checkout() {
     };
 
     const selectedAddress = addresses.find(addr => addr._id === selectedAddressId);
-
-
     const handleMakeOrder = async () => {
         try {
             if (!selectedAddress) {
@@ -82,7 +80,7 @@ function Checkout() {
             const response = await axios.post(`${baseurl}/order/create`, {
                 userId: user._id,
                 items: cart,
-                deliveryLocation: selectedAddress.location,
+                deliveryLocation: selectedAddress,
                 totalAmount: grandTotal
             }, {
                 headers: {
@@ -120,14 +118,14 @@ function Checkout() {
                     <div className="col-12 col-lg-8 mb-4">
                         <div className="d-flex flex-column gap-2">
                             <div className={`${styles.bg_color_radius}`}>
-                                <h5><span className='btn btn-primary'>1 </span> Personal Details</h5>
+                                <h5><span className='btn btn-secondary disabled '>1 </span> Personal Details</h5>
                                 <div className='d-flex justify-content-between px-5'>
                                     <p><b>Name: </b> {user.name}</p>
                                     <p><b>Mobile no:</b> {user.mobile}</p>
                                 </div>
                             </div>
                             <div className={`${styles.bg_color_radius}`}>
-                                <h5><span className='btn btn-primary'>2 </span> Delivery Addresses</h5>
+                                <h5><span className='btn btn-secondary disabled'>2 </span> Delivery Addresses</h5>
                                 <div>
                                     {addresses.length === 0 ? (
                                         <p className='fs-5'>You have no saved addresses</p>
