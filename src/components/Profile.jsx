@@ -9,6 +9,7 @@ import { faUser, faSignOut, faReceipt, faEdit, faUserEdit, faCreditCard, faAddre
 import baseurl from "../Url";
 import { toast } from 'react-toastify';
 import SpendingBarChart from './SpendingBarChart';
+import { handleLogout } from './handleLogout';
 
 
 const EditPersonalInfo = ({ user, onUpdate }) => {
@@ -288,7 +289,7 @@ function Profile() {
             formData.append("email", form.email);
             formData.append("mobile", form.mobile);
             if (file) {
-                formData.append("image", file);
+                formData.append("profileImage", file);
             }
 
             const response = await fetch(`${baseurl}/update-profile`, {
@@ -338,11 +339,8 @@ function Profile() {
     if (activeTab === "cards") rightContent = <SavedCards />;
     if (activeTab === "addresses") rightContent = <SavedAddresses />;
 
-    const handleLogout = () => {
-        localStorage.setItem("isLoggedIn", false);
-        localStorage.removeItem("authToken");
-        navigate("/", { replace: true });
-        window.location.reload();
+    const handleLogoutClick = () => {
+        handleLogout({ navigate });
     };
 
     return (
@@ -410,7 +408,7 @@ function Profile() {
                                     <FontAwesomeIcon icon={faBoxOpen} /> My Orders
                                 </Link>
                                 <button className="list-group-item list-group-item-action d-flex align-items-center gap-2 text-danger" style={{ border: "none", background: "none" }}
-                                    onClick={handleLogout}>
+                                    onClick={handleLogoutClick}>
                                     <FontAwesomeIcon icon={faSignOut} /> Logout
                                 </button>
                             </div>

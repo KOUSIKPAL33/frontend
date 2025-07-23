@@ -5,9 +5,13 @@ tr {
 
 .my_table {
   text-align: center;
+  overflow: auto;
   width: 100%;
+  display: block;
 }
-
+tbody {
+  white-space: nowrap;
+}
 table thead th {
   padding: 17px 10px;
   font-size: 1.5rem;

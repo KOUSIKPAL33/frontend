@@ -6,6 +6,7 @@ import axios from 'axios';
 import baseurl from '../Url';
 import { toast } from 'react-toastify';
 import AdminStat from './AdminStat';
+import { handleLogout } from '../components/handleLogout';
 
 const Stat = ({ shop, orders }) => {
     return (
@@ -384,11 +385,8 @@ function Dashboard({ shop }) {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("shop");
-        navigate("/");
-        window.location.reload();
+    const handleLogoutClick = () => {
+        handleLogout({ isAdmin: true, navigate });
     };
 
     useEffect(() => {
@@ -492,7 +490,7 @@ function Dashboard({ shop }) {
                                 <FontAwesomeIcon icon={faCube} /> Add Product
                             </button>
                             <button className="list-group-item list-group-item-action d-flex align-items-center gap-2 text-danger" style={{ border: "none", background: "none" }}
-                                onClick={handleLogout}>
+                                onClick={handleLogoutClick}>
                                 <FontAwesomeIcon icon={faSignOut} /> Logout
                             </button>
                         </div>

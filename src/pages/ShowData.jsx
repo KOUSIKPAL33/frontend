@@ -51,10 +51,7 @@ function ShowData({ apiEndpoint, shopName }) {
     // Step 1: Filter based on categories
     let categoryFilteredData = {};
 
-    const categoriesToFilter =
-      Category.length === 0
-        ? [...new Set(foodItem.map(item => item.Category))]
-        : Category;
+    const categoriesToFilter = Category.length === 0 ? [...new Set(foodItem.map(item => item.Category))] : Category;
 
     categoriesToFilter.forEach(cat => {
       categoryFilteredData[cat] = foodItem.filter(item => item.Category === cat);
@@ -69,7 +66,6 @@ function ShowData({ apiEndpoint, shopName }) {
         });
       });
     }
-
     return categoryFilteredData;
   };
 

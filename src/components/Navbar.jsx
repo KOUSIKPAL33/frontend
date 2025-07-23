@@ -12,6 +12,7 @@ import { faUser, faSignOut, faReceipt } from "@fortawesome/free-solid-svg-icons"
 import logo from "../assets/logo.png";
 import AdminLogin from "../admin/AdminLogin";
 import { toast } from "react-toastify";
+import { handleLogout } from './handleLogout';
 
 
 const Navbar = () => {
@@ -25,12 +26,9 @@ const Navbar = () => {
   const [showModal, setShowModal] = useState(false);
   const [activeForm, setActiveForm] = useState("login");
   const navigate = useNavigate();
-  const handleLogout = () => {
-    localStorage.setItem("isLoggedIn", false);
-    localStorage.removeItem("authToken");
-    setIsLoggedIn(false);
-    navigate("/", { replace: true });
-    window.location.reload(); 
+
+  const handleLogoutClick = () => {
+    handleLogout({ navigate, setIsLoggedIn });
   };
 
   const toggleModal = (formType) => {
@@ -95,6 +93,7 @@ const Navbar = () => {
     };
     if (isLoggedIn) {
       fetchUserDetails();
+      
     }
   }, [isLoggedIn]);
 
@@ -120,6 +119,8 @@ const Navbar = () => {
     else if (location.pathname === "/kathijunction") setActivelink("kathijunction");
     else if (location.pathname === "/contact") setActivelink("contact");
   }, [location.pathname]);
+
+  
 
   return (
     <>
@@ -219,7 +220,7 @@ const Navbar = () => {
                       >
                         <Link className="btn btn-light w-100" to="/profile"><FontAwesomeIcon icon={faUser} className="me-2" /> My Profile</Link>
                         <Link className="btn btn-light w-100" to="/Myorders"><FontAwesomeIcon icon={faReceipt} className="me-2" /> My Orders</Link>
-                        <Link className="btn btn-light w-100" onClick={handleLogout}><FontAwesomeIcon icon={faSignOut} className="me-2" /> Logout</Link>
+                        <Link className="btn btn-light w-100" onClick={handleLogoutClick}><FontAwesomeIcon icon={faSignOut} className="me-2" /> Logout</Link>
                       </div>
                     )}
                   </li>
@@ -264,7 +265,6 @@ const Navbar = () => {
                 <AdminLogin
                   onAdminLoginSuccess={() => setShowModal(false)}
                   switchToLogin={() => setActiveForm("adminlogin")}
-
                 />
               )}
             </div>

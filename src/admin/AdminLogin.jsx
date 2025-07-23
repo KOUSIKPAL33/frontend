@@ -51,11 +51,7 @@ function AdminLogin({ onAdminLoginSuccess }) {
       } else {
         localStorage.setItem("authToken", json.token);
         localStorage.setItem("shop", credentials.shop);
-        toast.success("Login Successful", {
-          theme: "colored",
-          position: "top-center",
-          autoClose: 1500,
-        });
+        toast.success("Login Successful", {theme: "colored",position: "top-center",autoClose: 1500,});
         onAdminLoginSuccess();
         navigate("/admin/dashboard");
 

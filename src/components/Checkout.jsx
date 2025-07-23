@@ -12,6 +12,7 @@ import { userContext } from "../contexts/userContext";
 import baseurl from '../Url';
 import Navbar from './Navbar';
 
+
 function Checkout() {
     const { user } = useContext(userContext);
     const { cart } = useContext(cartcontext)
@@ -19,13 +20,25 @@ function Checkout() {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [address, setAddress] = useState({ name: "", mobileno: "", location: "" });
     const [selectedAddressId, setSelectedAddressId] = useState(null);
+    const [paymentMethod, setPaymentMethod] = useState(null);
     const navigate = useNavigate();
-
+    const [razorpayKey, setRazorpayKey] = useState(null);
     const itemTotal = totalPrice(cart);
     const gst = Math.floor(itemTotal * .05);
     const deliveryfee = ((itemTotal >= 300) ? 0 : 30);
     const grandTotal = (itemTotal) + gst + deliveryfee;
     const token = localStorage.getItem('authToken');
+
+    // Load Razorpay script
+    useEffect(() => {
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        document.body.appendChild(script);
+        return () => {
+            document.body.removeChild(script);
+        };
+    }, []);
 
 
     const addNewAddress = async (e) => {
@@ -69,20 +82,21 @@ function Checkout() {
     };
 
     const selectedAddress = addresses.find(addr => addr._id === selectedAddressId);
-    const handleMakeOrder = async () => {
+
+    // Create order with payment status
+    const createOrder = async (paymentStatus = 'pending', paymentId = null) => {
         try {
-            if (!selectedAddress) {
-                toast.error("No delivery address selected or available.", {
-                    autoClose: 1500,
-                });
-                return;
-            }
-            const response = await axios.post(`${baseurl}/order/create`, {
+            const orderData = {
                 userId: user._id,
                 items: cart,
                 deliveryLocation: selectedAddress,
-                totalAmount: grandTotal
-            }, {
+                totalAmount: grandTotal,
+                paymentMethod: paymentMethod,
+                paymentStatus: paymentStatus,
+                paymentId: paymentId
+            };
+
+            const response = await axios.post(`${baseurl}/order/create`, orderData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
@@ -91,13 +105,174 @@ function Checkout() {
             if (response.status === 200) {
                 toast.success("Order placed successfully!", {
                     autoClose: 1000,
-                }
-                );
+                });
                 setTimeout(() => {
                     navigate("/Myorders");
                 }, 1000);
             }
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to place order");
+        }
+    };
 
+    // Handle Razorpay payment
+    const handleRazorpayPayment = async () => {
+        try {
+            // First create order on your backend to get order ID
+            const orderResponse = await axios.post(`${baseurl}/order/create-razorpay-order`, {
+                amount: grandTotal * 100, // Razorpay expects amount in paise
+                currency: 'INR',
+                receipt: `order_${Date.now()}`
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+
+            if (!orderResponse.data.orderId) {
+                toast.error("Failed to create payment order");
+                return;
+            }
+
+            const options = {
+                key: razorpayKey,
+                amount: grandTotal * 100,
+                currency: "INR",
+                name: "InCampusFood",
+                description: "Payment for your order",
+                order_id: orderResponse.data.orderId,
+                handler: async function (response) {
+                    try {
+                        // Verify payment on backend
+                        const verifyResponse = await axios.post(`${baseurl}/order/verify-payment`, {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature
+                        }, {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            }
+                        });
+
+                        if (verifyResponse.data.verified) {
+                            await createOrder('completed', response.razorpay_payment_id);
+                        } else {
+                            toast.error("Payment verification failed");
+                        }
+                    } catch (error) {
+                        console.error("Payment verification error:", error);
+                        toast.error("Payment verification failed");
+                    }
+                },
+                theme: {
+                    color: "#3399cc"
+                },
+                modal: {
+                    ondismiss: function() {
+                        toast.info("Payment cancelled by user");
+                    }
+                },
+                // Enable all payment methods
+                config: {
+                    display: {
+                        blocks: {
+                            upi: {
+                                name: "UPI Payment",
+                                instruments: [
+                                    {
+                                        method: "upi"
+                                    }
+                                ]
+                            },
+                            cards: {
+                                name: "Credit/Debit Cards",
+                                instruments: [
+                                    {
+                                        method: "card"
+                                    }
+                                ]
+                            },
+                            netbanking: {
+                                name: "Net Banking",
+                                instruments: [
+                                    {
+                                        method: "netbanking"
+                                    }
+                                ]
+                            },
+                            wallets: {
+                                name: "Wallets & Pay Later",
+                                instruments: [
+                                    {
+                                        method: "wallet"
+                                    },
+                                    {
+                                        method: "paylater"
+                                    }
+                                ]
+                            }
+                        },
+                        sequence: ["block.upi", "block.cards", "block.netbanking", "block.wallets"],
+                        preferences: {
+                            show_default_blocks: false
+                        }
+                    }
+                },
+                // Additional payment method preferences
+                prefill: {
+                    name: user.name,
+                    email: user.email || "",
+                    contact: user.mobile
+                },
+                notes: {
+                    address: "InCampusFood Order Payment"
+                },
+                reminder_enable: true,
+                // Enable specific payment methods
+                method: {
+                    upi: {
+                        flow: "collect"
+                    },
+                    card: {
+                        flow: "intent"
+                    },
+                    netbanking: {
+                        flow: "intent"
+                    },
+                    wallet: {
+                        flow: "intent"
+                    },
+                    paylater: {
+                        flow: "intent"
+                    }
+                }
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+        } catch (error) {
+            console.error("Razorpay error:", error);
+            toast.error("Failed to initiate payment");
+        }
+    };
+
+    const handleMakeOrder = async () => {
+        try {
+            if (!selectedAddress) {
+                toast.error("No delivery address selected or available.", {
+                    autoClose: 1500,
+                });
+                return;
+            }
+
+            if (paymentMethod === 'cod') {
+                // Cash on delivery - create order directly
+                await createOrder('pending');
+            } else if (paymentMethod === 'online') {
+                // Online payment - initiate Razorpay
+                await handleRazorpayPayment();
+            }
         } catch (err) {
             console.error(err);
             toast.error("Failed to place order");
@@ -106,6 +281,15 @@ function Checkout() {
 
     useEffect(() => {
         setAddresses(user.addresses || []);
+        const fetchRazorpayKey = async () => {
+            try {
+                const response = await axios.get(`${baseurl}/config/razorpay`);
+                setRazorpayKey(response.data.key);
+            } catch (error) {
+                console.error("Error fetching Razorpay key:", error);
+            }
+        };
+        fetchRazorpayKey();
     }, [user.addresses]);
 
     // ...existing imports and code...
@@ -170,6 +354,44 @@ function Checkout() {
                                     )}
                                 </div>
                             </div>
+                            {/* Payment Method Selection */}
+                            <div className={`${styles.bg_color_radius}`}>
+                                <h5><span className='btn btn-secondary disabled'>3 </span> Payment Method</h5>
+                                <div className='d-flex flex-column gap-3'>
+                                    <div className='form-check'>
+                                        <input 
+                                            className="form-check-input" 
+                                            type="radio" 
+                                            name="paymentMethod" 
+                                            id="cod" 
+                                            value="cod" 
+                                            checked={paymentMethod === 'cod'} 
+                                            onChange={(e) => setPaymentMethod(e.target.value)}
+                                        />
+                                        <label className="form-check-label" htmlFor="cod">
+                                            <strong>Cash on Delivery (COD)</strong>
+                                            <br />
+                                            <small className="text-muted">Pay when you receive your order</small>
+                                        </label>
+                                    </div>
+                                    <div className='form-check'>
+                                        <input 
+                                            className="form-check-input" 
+                                            type="radio" 
+                                            name="paymentMethod" 
+                                            id="online" 
+                                            value="online" 
+                                            checked={paymentMethod === 'online'} 
+                                            onChange={(e) => setPaymentMethod(e.target.value)}
+                                        />
+                                        <label className="form-check-label" htmlFor="online">
+                                            <strong>Pay Online</strong>
+                                            <br />
+                                            <small className="text-muted">Secure payment via Razorpay</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     {/* Right: Bill Details (1/3 width on large screens) */}
@@ -196,7 +418,9 @@ function Checkout() {
                             </div>
                         </div>
                         <div className={`${styles.bg_color_radius} mt-3`}>
-                            <div className='btn btn-primary fs-5 w-100' onClick={handleMakeOrder}>Make Order</div>
+                            <div className='btn btn-primary fs-5 w-100' onClick={handleMakeOrder}>
+                                {paymentMethod === 'cod' ? 'Place Order (COD)' : 'Pay Online'}
+                            </div>
                         </div>
                     </div>
                 </div>

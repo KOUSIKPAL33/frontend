@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
+import { handleLogout } from '../components/handleLogout';
 
 function Navbar({ shop }) {
   const token = localStorage.getItem("authToken");
@@ -8,10 +9,8 @@ function Navbar({ shop }) {
   const getActiveClass = (path) =>
     location.pathname.includes(path) ? "active text-white" : "text-secondary";
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("shop");
-    navigate("/");
+  const handleLogoutClick = () => {
+    handleLogout({ isAdmin: true, navigate });
   };
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark bg-gradient p-1 fixed-top">
@@ -43,7 +42,7 @@ function Navbar({ shop }) {
           {token ? (
             <div className="d-flex gap-1">
               <li className="btn btn-light">{shop}</li>
-              <li className="btn btn-danger" onClick={handleLogout}>Logout</li>
+              <li className="btn btn-danger" onClick={handleLogoutClick}>Logout</li>
             </div>
           ) : (
             <div>not token</div>
