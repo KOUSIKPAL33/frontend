@@ -4,7 +4,9 @@ import Footer from '../components/Footer';
 import Card from './Card';
 import CardDominos from './CardDominos';
 import styles from './Shop.module.css';
-import { toast, ToastContainer } from 'react-toastify';
+import toast,{ Toaster } from 'react-hot-toast';
+import Loading from '../components/Loading';
+
 
 function ShowData({ apiEndpoint, shopName }) {
   const [foodItem, setFoodItem] = useState([]);
@@ -51,21 +53,26 @@ function ShowData({ apiEndpoint, shopName }) {
     // Step 1: Filter based on categories
     let categoryFilteredData = {};
 
-    const categoriesToFilter = Category.length === 0 ? [...new Set(foodItem.map(item => item.Category))] : Category;
+    const categoriesToFilter =
+      Category.length === 0
+        ? [...new Set(foodItem.map((item) => item.Category))]
+        : Category;
 
-    categoriesToFilter.forEach(cat => {
-      categoryFilteredData[cat] = foodItem.filter(item => item.Category === cat);
+    categoriesToFilter.forEach((cat) => {
+      categoryFilteredData[cat] = foodItem.filter((item) => item.Category === cat);
     });
 
     // Step 2: Apply Name-based filtering within each category group
     if (Name.length > 0) {
-      Object.keys(categoryFilteredData).forEach(cat => {
-        categoryFilteredData[cat] = categoryFilteredData[cat].filter(item => {
+      Object.keys(categoryFilteredData).forEach((cat) => {
+        categoryFilteredData[cat] = categoryFilteredData[cat].filter((item) => {
           const itemName = item.Name.toLowerCase();
-          return Name.every(filterName => itemName.includes(filterName.toLowerCase()));
+          // The fix is here: change 'every' to 'some'
+          return Name.some((filterName) => itemName.includes(filterName.toLowerCase()));
         });
       });
     }
+
     return categoryFilteredData;
   };
 
@@ -76,15 +83,9 @@ function ShowData({ apiEndpoint, shopName }) {
   const finalList = getFilteredData();
   return (
     <>
-    <ToastContainer/>
+      <Toaster />
       <Navbar />
-      {loading ? (
-        <div className="d-flex justify-content-center align-items-center position-fixed top-0 start-0 w-100 h-100" style={{ backgroundColor: "rgba(255,255,255,0.7)", zIndex: 9999 }}>
-          <div className="spinner-border" style={{width:"3rem",height:"3rem"}} role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      ) : (
+      {loading ? (<Loading/>) : (
         <div className='container-fluid mt-5'>
           <div className="row">
             <div className={`col-3 ${styles.sidebar}`}>

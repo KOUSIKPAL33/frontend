@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowAltCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from 'react-router-dom';
 import Showaddress from './Showaddress';
-import { toast } from 'react-toastify';
+import toast  from 'react-hot-toast';
 import axios from 'axios';
 import styles from './checkout.module.css'
 import { totalItem, totalPrice } from '../contexts/Cartreducer';
@@ -20,11 +20,12 @@ function Checkout() {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [address, setAddress] = useState({ name: "", mobileno: "", location: "" });
     const [selectedAddressId, setSelectedAddressId] = useState(null);
-    const [paymentMethod, setPaymentMethod] = useState(null);
+    const [paymentMethod, setPaymentMethod] = useState("online");
     const navigate = useNavigate();
     const [razorpayKey, setRazorpayKey] = useState(null);
     const itemTotal = totalPrice(cart);
-    const gst = Math.floor(itemTotal * .05);
+    //const gst = Math.floor(itemTotal * .05);
+    const gst = 0;
     const deliveryfee = ((itemTotal >= 300) ? 0 : 30);
     const grandTotal = (itemTotal) + gst + deliveryfee;
     const token = localStorage.getItem('authToken');
@@ -57,10 +58,11 @@ function Checkout() {
                 }
             }
             );
-            if (!response) { 
-                toast.error("Failed to add address", { autoClose: 1500, });
-                return; }
-            toast.success("Address is added successfully", { autoClose: 1500, })
+            if (!response) {
+                toast.error("Failed to add address", { duration: 1500, });
+                return;
+            }
+            toast.success("Address is added successfully", { duration: 1500, })
             setAddress({ name: "", mobileno: "", location: "", });
             setAddresses([...addresses, addressDetails.addressDetails]);
             setIsFormOpen(!isFormOpen);
@@ -104,7 +106,7 @@ function Checkout() {
 
             if (response.status === 200) {
                 toast.success("Order placed successfully!", {
-                    autoClose: 1000,
+                    duration: 1000,
                 });
                 setTimeout(() => {
                     navigate("/Myorders");
@@ -144,7 +146,6 @@ function Checkout() {
                 order_id: orderResponse.data.orderId,
                 handler: async function (response) {
                     try {
-                        // Verify payment on backend
                         const verifyResponse = await axios.post(`${baseurl}/order/verify-payment`, {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
@@ -156,7 +157,24 @@ function Checkout() {
                         });
 
                         if (verifyResponse.data.verified) {
-                            await createOrder('completed', response.razorpay_payment_id);
+                            await axios.post(`${baseurl}/order/create`, {
+                                userId: user._id,
+                                items: cart,
+                                deliveryLocation: selectedAddress,
+                                totalAmount: grandTotal,
+                                paymentMethod: "online",
+                                paymentStatus: "completed",
+                                paymentId: response.razorpay_payment_id
+                            }, {
+                                headers: {
+                                    Authorization: `Bearer ${token}`,
+                                }
+                            });
+
+                            toast.success("Order placed successfully!", { duration: 1000 });
+                            setTimeout(() => {
+                                navigate("/Myorders");
+                            }, 1000);
                         } else {
                             toast.error("Payment verification failed");
                         }
@@ -165,90 +183,41 @@ function Checkout() {
                         toast.error("Payment verification failed");
                     }
                 },
+                prefill: {
+                    name: user.name,
+                    email: user.email,
+                    contact: user.mobile
+                },
                 theme: {
                     color: "#3399cc"
                 },
-                modal: {
-                    ondismiss: function() {
-                        toast.info("Payment cancelled by user");
-                    }
-                },
-                // Enable all payment methods
                 config: {
                     display: {
                         blocks: {
                             upi: {
-                                name: "UPI Payment",
-                                instruments: [
-                                    {
-                                        method: "upi"
-                                    }
-                                ]
+                                name: "UPI",
+                                instruments: [{ method: "upi" }]
                             },
                             cards: {
-                                name: "Credit/Debit Cards",
-                                instruments: [
-                                    {
-                                        method: "card"
-                                    }
-                                ]
+                                name: "Cards",
+                                instruments: [{ method: "card" }]
                             },
                             netbanking: {
-                                name: "Net Banking",
-                                instruments: [
-                                    {
-                                        method: "netbanking"
-                                    }
-                                ]
+                                name: "Netbanking",
+                                instruments: [{ method: "netbanking" }]
                             },
                             wallets: {
-                                name: "Wallets & Pay Later",
-                                instruments: [
-                                    {
-                                        method: "wallet"
-                                    },
-                                    {
-                                        method: "paylater"
-                                    }
-                                ]
-                            }
+                                name: "Wallets",
+                                instruments: [{ method: "wallet" }]
+                            },
                         },
                         sequence: ["block.upi", "block.cards", "block.netbanking", "block.wallets"],
                         preferences: {
                             show_default_blocks: false
                         }
                     }
-                },
-                // Additional payment method preferences
-                prefill: {
-                    name: user.name,
-                    email: user.email || "",
-                    contact: user.mobile
-                },
-                notes: {
-                    address: "InCampusFood Order Payment"
-                },
-                reminder_enable: true,
-                // Enable specific payment methods
-                method: {
-                    upi: {
-                        flow: "collect"
-                    },
-                    card: {
-                        flow: "intent"
-                    },
-                    netbanking: {
-                        flow: "intent"
-                    },
-                    wallet: {
-                        flow: "intent"
-                    },
-                    paylater: {
-                        flow: "intent"
-                    }
                 }
             };
-
             const rzp = new window.Razorpay(options);
             rzp.open();
         } catch (error) {
@@ -261,16 +230,17 @@ function Checkout() {
         try {
             if (!selectedAddress) {
                 toast.error("No delivery address selected or available.", {
-                    autoClose: 1500,
+                    duration: 1500,
+                    position: "top-center",
+                    
                 });
                 return;
             }
 
             if (paymentMethod === 'cod') {
-                // Cash on delivery - create order directly
+
                 await createOrder('pending');
             } else if (paymentMethod === 'online') {
-                // Online payment - initiate Razorpay
                 await handleRazorpayPayment();
             }
         } catch (err) {
@@ -359,13 +329,13 @@ function Checkout() {
                                 <h5><span className='btn btn-secondary disabled'>3 </span> Payment Method</h5>
                                 <div className='d-flex flex-column gap-3'>
                                     <div className='form-check'>
-                                        <input 
-                                            className="form-check-input" 
-                                            type="radio" 
-                                            name="paymentMethod" 
-                                            id="cod" 
-                                            value="cod" 
-                                            checked={paymentMethod === 'cod'} 
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="paymentMethod"
+                                            id="cod"
+                                            value="cod"
+                                            checked={paymentMethod === 'cod'}
                                             onChange={(e) => setPaymentMethod(e.target.value)}
                                         />
                                         <label className="form-check-label" htmlFor="cod">
@@ -375,13 +345,13 @@ function Checkout() {
                                         </label>
                                     </div>
                                     <div className='form-check'>
-                                        <input 
-                                            className="form-check-input" 
-                                            type="radio" 
-                                            name="paymentMethod" 
-                                            id="online" 
-                                            value="online" 
-                                            checked={paymentMethod === 'online'} 
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="paymentMethod"
+                                            id="online"
+                                            value="online"
+                                            checked={paymentMethod === 'online'}
                                             onChange={(e) => setPaymentMethod(e.target.value)}
                                         />
                                         <label className="form-check-label" htmlFor="online">

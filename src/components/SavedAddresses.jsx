@@ -1,8 +1,8 @@
 import React from 'react'
 import Showaddress from './Showaddress';
-import {useState, useContext,useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import toast  from 'react-hot-toast';
 import baseurl from '../Url';
 import { userContext } from "../contexts/userContext";
 
@@ -30,10 +30,11 @@ function SavedAddresses() {
                 }
             }
             );
-            if (!response) { 
-                toast.error("Failed to add address", { autoClose: 1500, });
-            return; }
-            toast.success("Address is added successfully", { autoClose: 1500, })
+            if (!response) {
+                toast.error("Failed to add address", { duration: 1500, });
+                return;
+            }
+            toast.success("Address is added successfully", { duration: 1500, })
             setAddress({ name: "", mobileno: "", location: "", });
             setAddresses([...addresses, addressDetails.addressDetails]);
             setIsFormOpen(!isFormOpen);

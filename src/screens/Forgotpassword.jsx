@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import axios from "axios";
 import baseurl from "../Url";
 import styles from "./signup.module.css";
 
-function Forgotpassword({onForgotpasswordSuccess}) {
+function Forgotpassword({ onForgotpasswordSuccess }) {
   const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: Password
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");

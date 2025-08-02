@@ -1,11 +1,12 @@
 import React, { useContext, useState } from 'react'
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 import axios from 'axios';
 import { cartcontext } from '../contexts/Contextprovider';
 import baseurl from '../Url';
 
 function CardDominos(props) {
-  const {dispatch}=useContext(cartcontext)
+  console.log(props)
+  const { dispatch } = useContext(cartcontext)
   const [price, setPrice] = useState(props.options.Regular);
   const [choiceoptions, setOptions] = useState("Regular")
 
@@ -32,14 +33,14 @@ function CardDominos(props) {
       if (!token) {
         toast.error('You must be logged in to add items to the cart.', {
           position: "bottom-right",
-          autoClose:1500,
+          duration: 1500,
         });
         return;
       }
       const productDetails = {
         productId: props.pid,
         productDetails: {
-          shopname:props.shopname,
+          shopname: props.shopname,
           name: props.name,
           imgSrc: props.imgSrc,
           option: choiceoptions,
@@ -55,14 +56,14 @@ function CardDominos(props) {
       );
       if (response.data.success) {
         dispatch({ type: "Add", product: props });
-        toast.success("Item added to cart!", { autoClose: 1500,});
+        toast.success("Item added to cart!", { duration: 1500, });
       }
 
     } catch (error) {
       if (error.response && error.response.status === 400 && error.response.data.message === "Item already in cart") {
-        toast.info('Item is already in the cart.',{autoClose: 1500,});
+        toast.info('Item is already in the cart.', { duration: 1500, });
       } else {
-        toast.error('Something went wrong. Please try again.',{autoClose: 1500,});
+        toast.error('Something went wrong. Please try again.', { duration: 1500, });
       }
     }
   }
@@ -84,7 +85,7 @@ function CardDominos(props) {
                 <option value="Large">Large</option>
               </select>
             </div>
-            <button className="btn btn-secondary fs-6">Rs.{price}/-</button>
+            <button className="btn btn-light fs-6">Rs.{price}/-</button>
             <button className="btn btn-primary fs-6 p-1" onClick={handleCart}>Add Cart</button>
           </div>
         </div>

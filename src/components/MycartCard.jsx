@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import styles from './cart.module.css';
 import axios from 'axios';
 import { cartcontext } from '../contexts/Contextprovider';
-import { toast } from 'react-toastify';
+import toast  from 'react-hot-toast';
 import baseurl from '../Url';
 
 function MycartCard({ product, slno }) {
@@ -30,7 +30,7 @@ function MycartCard({ product, slno }) {
     if (index !== -1 && cart[index].quantity < 10) {
       dispatch({ type: "Increase", id });
       updateQuantity(id, "increase");
-      
+
     }
   };
 
@@ -48,11 +48,11 @@ function MycartCard({ product, slno }) {
 
     if (!token) {
       toast.error("You are not logged in", {
-        autoClose: 1500
+        duration: 1500
       });
       return;
     }
-    
+
     try {
       const response = await axios.delete(`${baseurl}/cart/delete`,
         {
@@ -68,11 +68,11 @@ function MycartCard({ product, slno }) {
         dispatch({ type: "Remove", id: product.productId });
         toast.success('Item deleted Successfully', {
           position: 'bottom-right',
-          autoClose: 1500
+          duration: 1500
         })
       } else {
         toast.error('Failed to delete item', {
-          autoClose: 1500
+          duration: 1500
         });
       }
     } catch (error) {

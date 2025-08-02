@@ -3,7 +3,7 @@ import styles from '../pages/Card.module.css';
 import stylesoverlay from "../components/Navbar.module.css";
 import stylesform from "../screens/signup.module.css"
 
-import { ToastContainer, toast } from 'react-toastify';
+import toast, { Toaster} from 'react-hot-toast';
 import axios from 'axios';
 
 import baseurl from "../Url";
@@ -17,7 +17,7 @@ function Card(props) {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-      
+
         if (!updatedName || !updatedPrice) {
             toast.error("Please fill in all fields");
             return;
@@ -30,8 +30,8 @@ function Card(props) {
         if (updatedImage) {
             formData.append('image', updatedImage);
         }
-         try {
-            const response = await axios.put( `${baseurl}/update/${props.pid}`,
+        try {
+            const response = await axios.put(`${baseurl}/update/${props.pid}`,
                 formData,
                 {
                     headers: {
@@ -56,7 +56,7 @@ function Card(props) {
     };
     const handleUpdateSuccess = () => {
         setShowModal(false);
-        
+
     };
     const handleDeleteProduct = async () => {
         if (window.confirm("Are you sure you want to delete this product?")) {
@@ -79,13 +79,20 @@ function Card(props) {
     return (
         <>
             <div>
-                <ToastContainer />
+                <Toaster />
                 <div className={'border border-primary shadow p-3 mb-5 bg-body rounded' + styles.myzoom} style={{ width: '16.5rem' }}>
                     <img src={`${baseurl.replace('/api', '')}/${props.imgSrc}`} className="card-img-top" style={{ height: '12rem' }} alt={props.name} />
                     <div className="card-body">
                         <h5 className="card-title text-wrap">{props.name}</h5>
                         <p className="card-text m-0">Some Description </p>
-                        <p className="card-text"><strong>Availble : </strong>{props.available?("Yes"):("No")}</p>
+                        <p className="card-text">
+                            <strong>Available : </strong>
+                            <span className={`${!props.available ? "bg-warning rounded px-3" : ""}`}>
+                                {props.available ? "Yes" : "No"}
+                            </span>
+                        </p>
+
+
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <div className="btn btn-secondary text-center">₹ {props.price}/-</div>
                             <button
@@ -103,8 +110,8 @@ function Card(props) {
                     </div>
                 </div>
             </div>
-            {showModal && (
-                <div className={stylesoverlay.modal_overlay}>
+            {true && (
+                <div className={`${stylesoverlay.modal_overlay} ${showModal ? stylesoverlay.show : ''}`}>
                     <div className={stylesoverlay.modal_content}>
                         <button className={stylesoverlay.close_btn} onClick={() => setShowModal(false)}>✖</button>
                         <div className="container">

@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 import baseurl from '../Url';
 
 function Showaddress(props) {
@@ -10,7 +10,7 @@ function Showaddress(props) {
 
     if (!token) {
       toast.error("You are not logged in", {
-        autoClose: 1500,
+        duration: 1500,
       });
       return;
     }
@@ -27,12 +27,12 @@ function Showaddress(props) {
 
       if (response.data.success) {
         toast.success("Address deleted successfully", {
-          autoClose:1500,
+          duration: 1500,
         })
         props.onDelete(props.id);
       } else {
         toast.error("Failed to delete address", {
-          autoClose:1500,
+          duration: 1500,
         });
       }
     } catch (error) {
@@ -42,11 +42,11 @@ function Showaddress(props) {
   return (
     <div className='d-flex justify-content-between  p-3 px-4 mb-2 bg-white'>
       <div>
-        <p className='m-0'> 
+        <p className='m-0'>
           <input type="radio" name="selectedAddress" id="" checked={props.isSelected}
             onChange={() => props.onSelect(props.id)}
-          
-          /> 
+
+          />
           <b>{props.name}</b> {props.mobileno}</p>
         <p className='m-0 p-3 pb-0'>{props.location}</p>
       </div>

@@ -1,20 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
 
 function SpendingBarChart({orders}) {
   const [view, setView] = useState("shopname");
   const [data, setData] = useState([]);
-
-
+  
   useEffect(() => {
     const now = new Date();
 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faUserEdit, faCreditCard, faAddressBook, faBoxOpen, faSignOut, faEdit, faChartBar, faCartPlus, faBoxes, faCube } from '@fortawesome/free-solid-svg-icons';
-import { Link,useNavigate } from 'react-router-dom';
+import { faUser, faUserEdit, faSignOut, faEdit, faChartBar, faCartPlus, faBoxes, faCube } from '@fortawesome/free-solid-svg-icons';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import baseurl from '../Url';
-import { toast } from 'react-toastify';
+import toast  from 'react-hot-toast';
 import AdminStat from './AdminStat';
 import { handleLogout } from '../components/handleLogout';
 
@@ -70,13 +70,13 @@ const EditPersonalInfo = ({ user, setPreview, setUser }) => {
                     profileImage: res.data.profileImage,
                 }));
                 setPreview(res.data.profileImage);
-                toast.success("Profile updated successfully", { autoClose: 1500 });
+                toast.success("Profile updated successfully", { duration: 1500 });
             } else {
-                toast.error("Failed to update profile", { autoClose: 1500 });
+                toast.error("Failed to update profile", { duration: 1500 });
             }
         } catch (error) {
             console.error("Failed to update profile:", error);
-            toast.error("Something went wrong", { autoClose: 1500 });
+            toast.error("Something went wrong", { duration: 1500 });
         }
     };
 
@@ -221,10 +221,10 @@ const Addcategory = ({ shop }) => {
             if (response.ok) {
                 setCategory('');
                 toast.success("Category Added Successfully.", {
-                    autoClose: 1500,
+                    duration: 1500,
                 });
             } else {
-                toast.error('Failed to add category', { autoClose: 1500 });
+                toast.error('Failed to add category', { duration: 1500 });
             }
         } catch (err) {
             console.error('Error:', err);
@@ -269,7 +269,7 @@ const Addproduct = ({ shop }) => {
         const formData = new FormData();
         formData.append('name', name);
         formData.append('price', price);
-        formData.append('shop', shop); // pass shop name or ID
+        formData.append('shop', shop);
         formData.append('image', image);
         formData.append('category', category);
         try {
@@ -284,7 +284,7 @@ const Addproduct = ({ shop }) => {
                 setPrice('');
                 setImage(null);
                 toast.success("Product Added Succesfully.", {
-                    autoClose: 1500,
+                    duration: 1500,
                 })
             } else {
                 alert('Failed to add product');

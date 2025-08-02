@@ -12,7 +12,7 @@ function Footer() {
           <section>
             <div className="row">
               <div className="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
-                <h6 style={{ fontSize: '2rem' }}>InCampusFoods</h6>
+                <h6 style={{ fontSize: '2rem' }}>InCampusFood</h6>
                 <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo possimus ea ducimus ad magnam commodi quibusdam aliquid eligendi fugit ullam.</p>
               </div>
               <hr className="w-100 clearfix d-md-none" />
@@ -29,7 +29,7 @@ function Footer() {
               <div className="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
                 <h6 className="text-uppercase mb-4 font-weight-bold">Contact</h6>
                 <p> <FontAwesomeIcon icon={faMapMarkerAlt} /> NIT-Warangal, Hanamkonda, Telangana, 506004.</p>
-                <p> <FontAwesomeIcon icon={faEnvelope} /> incampusfoods2024@gmail.com</p>
+                <p> <FontAwesomeIcon icon={faEnvelope} /> incampusfood2025@gmail.com</p>
                 <p> <FontAwesomeIcon icon={faPhone} /> +91 7602783633</p>
                 <p> <FontAwesomeIcon icon={faPhone} /> +91 7602783633</p>
               </div>
@@ -45,8 +45,8 @@ function Footer() {
             </div>
           </section>
         </div>
-        <div className="text-center p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
-          © 2024 Copyright: <Link className="text-white" to="https://mdbootstrap.com/">InCampusFoods.com</Link>
+        <div className="text-center p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}>
+          © 2025 Copyright : Developed and Designed By Kousik Pal
         </div>
       </footer>
     </div>

@@ -1,14 +1,24 @@
 import React from 'react'
+import {useNavigate } from 'react-router-dom'
 import styles from "./body.module.css"
 
+
+
 function Body() {
+  const shops = ['yummpy', 'dominos','kathijunction'];
+  const navigate=useNavigate();
+
+  function getRandomShop() {
+    const index = Math.floor(Math.random() * shops.length);
+    navigate(`/${shops[index]}`);
+  }
   return (
-    <div className="container" style={{ marginTop: "100px" }}>
+    <div className="container mt-5">
       {/* <section className="row">
         <img src="./image/Header.png" alt="" />
       </section> */}
-      <section className="row">
-        <div className="col">
+      <section className="row shadow p-3 bg-white rounded ">
+        <div className="col p-3" style={{backgroundColor:"#eeeeefff"}}>
           <div className={styles.faster}>More than Faster
             <div className={`${styles.image} align-items-center`}>
               <img src="./image/bodyimage/french-fries.svg" alt="" className={styles.faster_img} />
@@ -23,9 +33,9 @@ function Body() {
             Food that is delivered at the right time. The trendy food delivery
             partner. Good food is what we deliver. Your hunger companion.
           </p>
-          <button className='btn btn-secondary btn-lg'>Explore Food</button>
+          <button className='btn btn-secondary btn-lg' onClick={getRandomShop}> Explore Food </button>
         </div>
-        <div className="col">
+        <div className="col" style={{ backgroundColor: "#eeeeefff" }}>
           <img src="./image/bodyimage/delivery-guy.svg" alt="" className={styles.home_img} />
         </div>
       </section>
@@ -115,7 +125,7 @@ function Body() {
           <h4>User</h4>
         </div>
         <div>
-          <h1>3</h1>
+          <h1>3+</h1>
           <h4>Best Shops</h4>
         </div>
         <div>

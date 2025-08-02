@@ -5,11 +5,13 @@ import CardDominos from './CardDominos';
 import styles from '../pages/Shop.module.css';
 import stylesoverlay from "../components/Navbar.module.css";
 import stylesform from "../screens/signup.module.css"
-import { toast } from 'react-toastify';
+import toast,{Toaster} from 'react-hot-toast';
+import Loading from '../components/Loading';
 
 function Showdata({ shop }) {
     const apiEndpoint = `${baseurl}/${shop}_data`;
     const [showModal, setShowModal] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const [foodItem, setFoodItem] = useState([]);
     const [filters, setFilters] = useState([]);
@@ -46,7 +48,7 @@ function Showdata({ shop }) {
                 setImage(null);
                 handleaAddSuccess();
                 toast.success("Product Added Succesfully.", {
-                    autoClose: 1500,
+                    duration: 1500,
                 })
             } else {
                 alert('Failed to add product');
@@ -75,6 +77,7 @@ function Showdata({ shop }) {
     };
 
     const loadData = async () => {
+        setLoading(true);
         try {
             let response = await fetch(apiEndpoint, {
                 method: 'POST',
@@ -85,32 +88,36 @@ function Showdata({ shop }) {
             response = await response.json();
             setFoodItem(response[0]);
             setFilters(response[1]);
+            setLoading(false);
         } catch (error) {
-            console.error("Error loading data:", error);
+            setLoading(false);
+            toast.error("An error occurred while fetching the shop data");
         }
     };
 
     const getFilteredData = () => {
         const { Category, Name } = selectedFilters;
 
-        // Step 1: Filter based on categories
         let categoryFilteredData = {};
 
         const categoriesToFilter =
             Category.length === 0
-                ? [...new Set(foodItem.map(item => item.Category))]
+                ? [...new Set(foodItem.map((item) => item.Category))]
                 : Category;
 
-        categoriesToFilter.forEach(cat => {
-            categoryFilteredData[cat] = foodItem.filter(item => item.Category === cat);
+        categoriesToFilter.forEach((cat) => {
+            categoryFilteredData[cat] = foodItem.filter((item) => item.Category === cat);
         });
 
         // Step 2: Apply Name-based filtering within each category group
         if (Name.length > 0) {
-            Object.keys(categoryFilteredData).forEach(cat => {
-                categoryFilteredData[cat] = categoryFilteredData[cat].filter(item => {
+            Object.keys(categoryFilteredData).forEach((cat) => {
+                categoryFilteredData[cat] = categoryFilteredData[cat].filter((item) => {
                     const itemName = item.Name.toLowerCase();
-                    return Name.every(filterName => itemName.includes(filterName.toLowerCase()));
+                    // The fix is here: change 'every' to 'some'
+                    return Name.some((filterName) =>
+                        itemName.includes(filterName.toLowerCase())
+                    );
                 });
             });
         }
@@ -133,6 +140,8 @@ function Showdata({ shop }) {
 
     return (
         <>
+            <Toaster />
+            {loading ? (<Loading/>) : (
             <div className='container-fluid mt-5'>
                 <div className="row">
                     <div className={`col-3 ${styles.sidebar}`}>
@@ -222,9 +231,10 @@ function Showdata({ shop }) {
                     </div>
                 </div>
             </div>
-            {showModal && (
-                <div className={stylesoverlay.modal_overlay}>
-                    <div className={stylesoverlay.modal_content}>
+            )}
+            {true && (
+                <div className={`${stylesoverlay.modal_overlay} ${showModal ? stylesoverlay.show : ''}`}>
+                        <div className={stylesoverlay.modal_content}>
                         <button className={stylesoverlay.close_btn} onClick={() => setShowModal(false)}>✖</button>
                         <div className="container">
                             <h1 className={stylesform.heading}>Add New Product</h1>

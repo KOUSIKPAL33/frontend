@@ -5,7 +5,7 @@ import Kathijunction from './pages/Kathijunction'
 import Home from './screens/Home'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Mycart from './components/Mycart'
-import { ToastContainer } from 'react-toastify'
+import { Toaster } from 'react-hot-toast'
 import Checkout from './components/Checkout'
 import AdminHome from './admin/AdminHome'
 import Myorders from './components/Myorders'
@@ -20,7 +20,7 @@ function App() {
   const token = localStorage.getItem("authToken");
   return (
     <>
-      <ToastContainer />
+      <Toaster />
       <Router>
         <div>
           <Routes>

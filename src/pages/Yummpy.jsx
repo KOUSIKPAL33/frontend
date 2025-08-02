@@ -4,7 +4,6 @@ import baseurl from '../Url';
 
 function Yummpy() {
   return <ShowData apiEndpoint={`${baseurl}/yummpy_data`}/>;
-
 }
 
 export default Yummpy

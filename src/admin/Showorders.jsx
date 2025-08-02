@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faReceipt, faEdit } from "@fortawesome/free-solid-svg-icons";
 import baseurl from '../Url';
 import Myorderscard from '../components/Myorderscard'
-import { toast } from 'react-toastify';
+import toast  from 'react-hot-toast';
 
 function Showorders({ shop }) {
   const [orders, setOrders] = useState([]);
@@ -31,7 +31,7 @@ function Showorders({ shop }) {
 
   const updateOrderStatus = async (orderId, shopName, newStatus) => {
     setUpdatingStatus(prev => ({ ...prev, [orderId]: true }));
-    
+
     try {
       const response = await axios.put(`${baseurl}/order/update`, {
         orderId,
@@ -91,7 +91,7 @@ function Showorders({ shop }) {
     };
 
     if (token && shop) fetchOrders();
-  }, [token, shop]);  
+  }, [token, shop]);
   return (
     <div style={{ backgroundColor: "#f1f3f6", marginTop: '5rem' }} className='container'>
       <h1
@@ -104,14 +104,14 @@ function Showorders({ shop }) {
         }}
       ><FontAwesomeIcon icon={faReceipt} className="me-2" />Orders
       </h1>
-      
+
       {/* Status Filter */}
       <div className="row mb-4">
         <div className="col-md-6 mx-auto">
           <div className="d-flex justify-content-center">
-            <select 
-              className="form-select w-auto" 
-              value={statusFilter} 
+            <select
+              className="form-select w-auto"
+              value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="all">All Orders</option>
@@ -143,39 +143,39 @@ function Showorders({ shop }) {
                       {order.shopOrder.status}
                     </span>
                     <div className="dropdown">
-                      <button 
-                        className="btn btn-sm btn-outline-primary dropdown-toggle" 
-                        type="button" 
-                        data-bs-toggle="dropdown" 
+                      <button
+                        className="btn btn-sm btn-outline-primary dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
                         aria-expanded="false"
                         disabled={updatingStatus[order.orderId]}
                       >
                         <FontAwesomeIcon icon={faEdit} /> Change Status
                       </button>
                       <ul className="dropdown-menu">
-                        <li><button 
-                          className="dropdown-item" 
+                        <li><button
+                          className="dropdown-item"
                           onClick={() => updateOrderStatus(order.orderId, order.shopOrder.shopName, 'pending')}
                           disabled={order.shopOrder.status === 'pending'}
                         >
                           Pending
                         </button></li>
-                        <li><button 
-                          className="dropdown-item" 
+                        <li><button
+                          className="dropdown-item"
                           onClick={() => updateOrderStatus(order.orderId, order.shopOrder.shopName, 'preparing')}
                           disabled={order.shopOrder.status === 'preparing'}
                         >
                           Preparing
                         </button></li>
-                        <li><button 
-                          className="dropdown-item" 
+                        <li><button
+                          className="dropdown-item"
                           onClick={() => updateOrderStatus(order.orderId, order.shopOrder.shopName, 'out for delivery')}
                           disabled={order.shopOrder.status === 'out for delivery'}
                         >
                           Out for Delivery
                         </button></li>
-                        <li><button 
-                          className="dropdown-item" 
+                        <li><button
+                          className="dropdown-item"
                           onClick={() => updateOrderStatus(order.orderId, order.shopOrder.shopName, 'delivered')}
                           disabled={order.shopOrder.status === 'delivered'}
                         >

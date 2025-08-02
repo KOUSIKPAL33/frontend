@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { toast } from 'react-toastify';
+import toast  from 'react-hot-toast';
 import styles from '../pages/Card.module.css';
 import stylesoverlay from "../components/Navbar.module.css";
 import stylesform from "../screens/signup.module.css"
@@ -53,7 +53,7 @@ function CardDominos(props) {
       formData.append('image', props.imgSrc); // Keep the existing image if no new image is provided
     }
     try {
-      const responce= await axios.put(`${baseurl}/dominos/update/${props.pid}`,
+      const responce = await axios.put(`${baseurl}/dominos/update/${props.pid}`,
         formData,
         {
           headers: {

@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faSignOut, faReceipt } from "@fortawesome/free-solid-svg-icons";
 import logo from "../assets/logo.png";
 import AdminLogin from "../admin/AdminLogin";
-import { toast } from "react-toastify";
+import toast  from "react-hot-toast";
 import { handleLogout } from './handleLogout';
 
 
@@ -79,7 +79,7 @@ const Navbar = () => {
               mobile: data.mobileno,
               email: data.email,
               addresses: data.addresses,
-              profileImage: data.profileImage,  
+              profileImage: data.profileImage,
             },
           });
         } else {
@@ -93,7 +93,7 @@ const Navbar = () => {
     };
     if (isLoggedIn) {
       fetchUserDetails();
-      
+
     }
   }, [isLoggedIn]);
 
@@ -120,7 +120,7 @@ const Navbar = () => {
     else if (location.pathname === "/contact") setActivelink("contact");
   }, [location.pathname]);
 
-  
+
 
   return (
     <>
@@ -129,7 +129,7 @@ const Navbar = () => {
           <Link className="navbar-brand m-0 p-0" to="/">
             <img
               src={logo}
-              alt="Incampusfoods Logo"
+              alt="Incampusfood Logo"
               style={{ height: "50px", width: "140px", objectFit: "cover" }}
             /> </Link>
           <button
@@ -147,16 +147,16 @@ const Navbar = () => {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav mx-auto">
               <li className="nav-item">
-                <Link className={`nav-link fs-5 ${activelink === "home" ? "active" : ""}`} to="/" onClick={() => setActivelink("home")}
+                <Link className={`nav-link mylink fs-5 ${activelink === "home" ? "active" : ""}`} to="/" onClick={() => setActivelink("home")}
                 >Home</Link>
               </li>
               <li className="nav-item">
-                <Link className={`nav-link fs-5 ${activelink === "yummpy" ? "active" : ""}`} to="/yummpy" onClick={() => setActivelink("yummpy")}
+                <Link className={`nav-link mylink fs-5 ${activelink === "yummpy" ? "active" : ""}`} to="/yummpy" onClick={() => setActivelink("yummpy")}
                 >Yummpy </Link>
               </li>
               <li className="nav-item">
                 <Link
-                  className={`nav-link fs-5 ${activelink === "dominos" ? "active" : ""}`}
+                  className={`nav-link mylink fs-5 ${activelink === "dominos" ? "active" : ""}`}
                   to="/dominos"
                   onClick={() => setActivelink("dominos")}
                 >
@@ -165,7 +165,7 @@ const Navbar = () => {
               </li>
               <li className="nav-item">
                 <Link
-                  className={`nav-link fs-5 ${activelink === "kathijunction" ? "active" : ""}`}
+                  className={`nav-link mylink fs-5 ${activelink === "kathijunction" ? "active" : ""}`}
                   to="/kathijunction"
                   onClick={() => setActivelink("kathijunction")}
                 >
@@ -174,7 +174,7 @@ const Navbar = () => {
               </li>
               <li className="nav-item">
                 <Link
-                  className={`nav-link fs-5 ${activelink === "contact" ? "active" : ""}`}
+                  className={`nav-link mylink fs-5 ${activelink === "contact" ? "active" : ""}`}
                   to="/contact"
                   onClick={() => setActivelink("contact")}
                 >
@@ -224,10 +224,8 @@ const Navbar = () => {
                       </div>
                     )}
                   </li>
-
                 </ul>
               </div>
-
             ) : (
               <div className="d-flex gap-1">
                 <button className="btn btn-secondary" onClick={() => toggleModal("signup")}>Sign Up</button>
@@ -239,8 +237,8 @@ const Navbar = () => {
         </div>
 
         {/* Modal */}
-        {showModal && (
-          <div className={styles.modal_overlay}>
+        {true && (
+          <div className={`${styles.modal_overlay} ${showModal ? styles.show : ''}`}>
             <div className={styles.modal_content}>
               <button className={styles.close_btn} onClick={() => setShowModal(false)}>✖</button>
               {activeForm === "login" ? (
@@ -270,6 +268,7 @@ const Navbar = () => {
             </div>
           </div>
         )}
+
       </nav>
     </>
   );

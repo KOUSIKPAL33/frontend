@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import baseurl from "../Url";
 import styles from "./signup.module.css"
@@ -29,18 +29,19 @@ function Login({ onLoginSuccess, switchToSignup, switchToadminlogin, switchToFor
       const responseText = await response.text();
       const json = responseText ? JSON.parse(responseText) : {};
       if (!json.success) {
-        toast.error("Enter valid credentials.", {position: "top-center",theme: "colored",autoClose: 1500,});
+        toast.error("Enter valid credentials.", { position: "top-center", theme: "colored", autoClose: 1500, });
         setLoading(false);
       } else {
         localStorage.setItem("isLoggedIn", true);
         localStorage.setItem("authToken", json.token);
-        toast.success("Login Successful", {theme: "colored",position: "top-center",autoClose: 1500,})
+        toast.success("Login Successful", { theme: "colored", position: "top-center", autoClose: 1500, })
         onLoginSuccess();
         setLoading(false);
       }
     } catch (error) {
       console.error("Error during submission:", error);
-      toast.error("An error occurred while submitting the form.");
+      toast.error("Something went wrong. Please try again later.");
+      setLoading(false);
     }
   };
 
@@ -76,7 +77,7 @@ function Login({ onLoginSuccess, switchToSignup, switchToadminlogin, switchToFor
           />
           <label htmlFor="exampleInputPassword1" >Password</label>
           <span
-            style={{position: "absolute", right: "20px",top: "50%",transform: "translateY(-50%)",cursor: "pointer",zIndex: 10}}
+            style={{ position: "absolute", right: "20px", top: "50%", transform: "translateY(-50%)", cursor: "pointer", zIndex: 10 }}
             onClick={() => setShowPassword((prev) => !prev)}
           >
             <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
@@ -85,7 +86,7 @@ function Login({ onLoginSuccess, switchToSignup, switchToadminlogin, switchToFor
         <div className="mb-3 d-flex justify-content-between">
           <div>
             <input type="checkbox" name="" id=""
-              className={`${styles.check}`} required />
+              className={`${styles.check}`} />
             <label htmlFor="">Remember me</label>
           </div>
           <p style={{ color: "blue", cursor: "pointer" }} onClick={switchToForgotpassord}>forgot password?</p>

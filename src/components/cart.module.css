@@ -14,7 +14,7 @@ tbody {
 }
 table thead th {
   padding: 17px 10px;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: #fff;
   background-color: #35858b;
   border: 1px solid white;
@@ -43,6 +43,7 @@ td {
   font-size: 1.2rem;
   background-color: #aefeff;
   padding: 1rem;
+  margin: 0;
 }
 
 .bottom_btn span {

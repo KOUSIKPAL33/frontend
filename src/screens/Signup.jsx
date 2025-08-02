@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 import styles from "./signup.module.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook, faTwitter, faLinkedin, faGoogle } from "@fortawesome/free-brands-svg-icons";

@@ -56,7 +56,7 @@ function Mycart() {
             </table>
             <div className={styles.table_bottom}>
               <h3 className={styles.bottom_btn}>Grand Total: Rs. {totalPrice(cart)}/-</h3>
-              <Link className={styles.bottom_btn} to={"/Checkout"}>Proceed to checkout</Link>
+              <h3 className={styles.bottom_btn} ><Link to={"/Checkout"}>Proceed to checkout</Link></h3>
             </div>
 
           </div>

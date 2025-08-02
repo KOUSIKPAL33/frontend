@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMapMarkerAlt, faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import toast  from 'react-hot-toast';
 import baseurl from '../Url';
 
 const Contactus = () => {
@@ -19,7 +19,7 @@ const Contactus = () => {
     setLoading(true);
     try {
       await axios.post(`${baseurl}/contactus`, form);
-      toast.success("Message sent successfully!", { autoClose: 1500 });
+      toast.success("Message sent successfully!", { duration: 1500 });
       setForm({ name: '', email: '', message: '' });
     } catch (err) {
       toast.error("Failed to send message. Please try again.");

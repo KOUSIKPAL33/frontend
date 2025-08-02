@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import toast  from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import baseurl from "../Url";
 import styles from "../screens/signup.module.css";
@@ -9,7 +9,7 @@ import { faFacebook, faTwitter, faLinkedin, faGoogle } from "@fortawesome/free-b
 
 function AdminLogin({ onAdminLoginSuccess }) {
   const [credentials, setCredentials] = useState({ email: "", password: "", shop: "" });
-  const [loading,setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     setLoading(true);
@@ -19,7 +19,7 @@ function AdminLogin({ onAdminLoginSuccess }) {
       toast.error("Please select a shop", {
         theme: "colored",
         position: "top-center",
-        autoClose: 1500,
+        duration: 1500,
       });
       setLoading(false);
       return;
@@ -45,13 +45,13 @@ function AdminLogin({ onAdminLoginSuccess }) {
         toast.error("Enter valid credentials.", {
           position: "top-center",
           theme: "colored",
-          autoClose: 1500,
+          duration: 1500,
         });
         setLoading(false);
       } else {
         localStorage.setItem("authToken", json.token);
         localStorage.setItem("shop", credentials.shop);
-        toast.success("Login Successful", {theme: "colored",position: "top-center",autoClose: 1500,});
+        toast.success("Login Successful", { theme: "colored", position: "top-center", duration: 1500, });
         onAdminLoginSuccess();
         navigate("/admin/dashboard");
 
@@ -125,8 +125,8 @@ function AdminLogin({ onAdminLoginSuccess }) {
           {loading ? (<button className="btn btn-primary" type="button" disabled>
             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Loading...
-          </button>) :(
-          <button type="submit" className="btn btn-primary">Sign in</button>
+          </button>) : (
+            <button type="submit" className="btn btn-primary">Sign in</button>
           )}
         </div>
 
