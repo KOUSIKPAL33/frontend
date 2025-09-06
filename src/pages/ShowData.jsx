@@ -163,7 +163,7 @@ function ShowData({ apiEndpoint, shopName }) {
                     ) : null
                   )
                 ) : (
-                  <h4 className="text-danger text-center mt-4">No product available based on your filter.</h4>
+                  <h4 className="text-danger text-center mt-4">No product available.</h4>
                 )}
 
               </div>

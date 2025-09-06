@@ -5,7 +5,7 @@ import { cartcontext } from '../contexts/Contextprovider';
 import baseurl from '../Url';
 
 function CardDominos(props) {
-  console.log(props)
+
   const { dispatch } = useContext(cartcontext)
   const [price, setPrice] = useState(props.options.Regular);
   const [choiceoptions, setOptions] = useState("Regular")
@@ -31,8 +31,8 @@ function CardDominos(props) {
     try {
       const token = localStorage.getItem('authToken');
       if (!token) {
-        toast.error('You must be logged in to add items to the cart.', {
-          position: "bottom-right",
+        toast.error('Please! log in to add items to the cart.', {
+          position: "top-center",
           duration: 1500,
         });
         return;

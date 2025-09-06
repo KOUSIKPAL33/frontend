@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowAltCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from 'react-router-dom';
 import Showaddress from './Showaddress';
-import toast  from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import axios from 'axios';
 import styles from './checkout.module.css'
 import { totalItem, totalPrice } from '../contexts/Cartreducer';
@@ -12,8 +10,10 @@ import { userContext } from "../contexts/userContext";
 import baseurl from '../Url';
 import Navbar from './Navbar';
 
-
+// Ensure you have the Stripe publishable key in your .env file
+import { loadStripe } from '@stripe/stripe-js';
 function Checkout() {
+    const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
     const { user } = useContext(userContext);
     const { cart } = useContext(cartcontext)
     const [addresses, setAddresses] = useState(user.addresses || []);
@@ -22,7 +22,6 @@ function Checkout() {
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [paymentMethod, setPaymentMethod] = useState("online");
     const navigate = useNavigate();
-    const [razorpayKey, setRazorpayKey] = useState(null);
     const itemTotal = totalPrice(cart);
     //const gst = Math.floor(itemTotal * .05);
     const gst = 0;
@@ -30,20 +29,21 @@ function Checkout() {
     const grandTotal = (itemTotal) + gst + deliveryfee;
     const token = localStorage.getItem('authToken');
 
-    // Load Razorpay script
-    useEffect(() => {
-        const script = document.createElement('script');
-        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-        script.async = true;
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
-        };
-    }, []);
-
-
     const addNewAddress = async (e) => {
         e.preventDefault();
+        if (!address.name || !address.mobileno || !address.location) {
+            toast.error("Please fill all the fields", { duration: 1500, });
+            return;
+        }else if (address.name.trim().length == 0) {
+            toast.error("Name cannot be left blank. ", { position: "top-center" });
+            return;
+        } else if (address.mobileno.trim().length == 0) {
+            toast.error("Mobile number cannot be left blank. ", { position: "top-center" });
+            return;
+        }else if (!/^[6-9]\d{9}$/.test(address.mobileno)) {
+            toast.error("Enter a valid 10-digit mobile number.", { position: "top-center" })
+            return;
+        }
         try {
             const addressDetails = {
                 addressDetails: {
@@ -97,7 +97,6 @@ function Checkout() {
                 paymentStatus: paymentStatus,
                 paymentId: paymentId
             };
-
             const response = await axios.post(`${baseurl}/order/create`, orderData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -118,113 +117,29 @@ function Checkout() {
         }
     };
 
-    // Handle Razorpay payment
-    const handleRazorpayPayment = async () => {
+    // Handle Stripe payment
+    const handleStripePayment = async () => {
         try {
-            // First create order on your backend to get order ID
-            const orderResponse = await axios.post(`${baseurl}/order/create-razorpay-order`, {
-                amount: grandTotal * 100, // Razorpay expects amount in paise
-                currency: 'INR',
-                receipt: `order_${Date.now()}`
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            });
-
-            if (!orderResponse.data.orderId) {
-                toast.error("Failed to create payment order");
-                return;
-            }
-
-            const options = {
-                key: razorpayKey,
-                amount: grandTotal * 100,
-                currency: "INR",
-                name: "InCampusFood",
-                description: "Payment for your order",
-                order_id: orderResponse.data.orderId,
-                handler: async function (response) {
-                    try {
-                        const verifyResponse = await axios.post(`${baseurl}/order/verify-payment`, {
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_signature: response.razorpay_signature
-                        }, {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            }
-                        });
-
-                        if (verifyResponse.data.verified) {
-                            await axios.post(`${baseurl}/order/create`, {
-                                userId: user._id,
-                                items: cart,
-                                deliveryLocation: selectedAddress,
-                                totalAmount: grandTotal,
-                                paymentMethod: "online",
-                                paymentStatus: "completed",
-                                paymentId: response.razorpay_payment_id
-                            }, {
-                                headers: {
-                                    Authorization: `Bearer ${token}`,
-                                }
-                            });
-
-                            toast.success("Order placed successfully!", { duration: 1000 });
-                            setTimeout(() => {
-                                navigate("/Myorders");
-                            }, 1000);
-                        } else {
-                            toast.error("Payment verification failed");
-                        }
-                    } catch (error) {
-                        console.error("Payment verification error:", error);
-                        toast.error("Payment verification failed");
-                    }
-                },
-                prefill: {
-                    name: user.name,
-                    email: user.email,
-                    contact: user.mobile
-                },
-                theme: {
-                    color: "#3399cc"
-                },
-                config: {
-                    display: {
-                        blocks: {
-                            upi: {
-                                name: "UPI",
-                                instruments: [{ method: "upi" }]
-                            },
-                            cards: {
-                                name: "Cards",
-                                instruments: [{ method: "card" }]
-                            },
-                            netbanking: {
-                                name: "Netbanking",
-                                instruments: [{ method: "netbanking" }]
-                            },
-                            wallets: {
-                                name: "Wallets",
-                                instruments: [{ method: "wallet" }]
-                            },
-                        },
-                        sequence: ["block.upi", "block.cards", "block.netbanking", "block.wallets"],
-                        preferences: {
-                            show_default_blocks: false
-                        }
-                    }
-                }
+            const orderData = {
+                userId: user._id,
+                items: cart,
+                deliveryLocation: selectedAddress,
+                totalAmount: grandTotal,
+                paymentMethod: paymentMethod,
             };
-            const rzp = new window.Razorpay(options);
-            rzp.open();
-        } catch (error) {
-            console.error("Razorpay error:", error);
+            const response = await axios.post(`${baseurl}/order/stripe`, orderData, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const { sessionId } = response.data;
+            const stripe = await stripePromise;
+            await stripe.redirectToCheckout({ sessionId });
+        } catch (err) {
             toast.error("Failed to initiate payment");
         }
     };
+
+    // Handle order placement
+
 
     const handleMakeOrder = async () => {
         try {
@@ -232,7 +147,7 @@ function Checkout() {
                 toast.error("No delivery address selected or available.", {
                     duration: 1500,
                     position: "top-center",
-                    
+
                 });
                 return;
             }
@@ -241,7 +156,8 @@ function Checkout() {
 
                 await createOrder('pending');
             } else if (paymentMethod === 'online') {
-                await handleRazorpayPayment();
+
+                await handleStripePayment();
             }
         } catch (err) {
             console.error(err);
@@ -251,15 +167,6 @@ function Checkout() {
 
     useEffect(() => {
         setAddresses(user.addresses || []);
-        const fetchRazorpayKey = async () => {
-            try {
-                const response = await axios.get(`${baseurl}/config/razorpay`);
-                setRazorpayKey(response.data.key);
-            } catch (error) {
-                console.error("Error fetching Razorpay key:", error);
-            }
-        };
-        fetchRazorpayKey();
     }, [user.addresses]);
 
     // ...existing imports and code...
@@ -357,7 +264,7 @@ function Checkout() {
                                         <label className="form-check-label" htmlFor="online">
                                             <strong>Pay Online</strong>
                                             <br />
-                                            <small className="text-muted">Secure payment via Razorpay</small>
+                                            <small className="text-muted">Secure payment via Stripe</small>
                                         </label>
                                     </div>
                                 </div>

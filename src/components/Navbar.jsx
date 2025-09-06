@@ -75,6 +75,7 @@ const Navbar = () => {
           dispatchUser({
             type: "SET_USER",
             payload: {
+              
               name: data.name,
               mobile: data.mobileno,
               email: data.email,

@@ -8,7 +8,7 @@ import { totalPrice } from '../contexts/Cartreducer';
 
 function Mycart() {
   const { cart } = useContext(cartcontext)
-
+  
   return (
     <>
       <Navbar />
